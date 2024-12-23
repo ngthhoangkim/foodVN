@@ -5,7 +5,7 @@ import Nav from "./components/nav";
 import "./css/App.css";
 import Home from "./pages/home"; 
 import ShoppingCart from "./pages/shoppingCart"; 
-import About from "./pages/about";
+
 
 function App() {
   return (
@@ -14,7 +14,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} /> 
         <Route path="/shopping-cart" element={<ShoppingCart />} /> 
-        <Route path="/about" element={<About />} />
       </Routes>
     </div>
   );

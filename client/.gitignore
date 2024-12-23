@@ -23,3 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 tailwind.config.js
+
+package-lock.json
+package.json

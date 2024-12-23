@@ -53,9 +53,9 @@ const ShoppingCart = () => {
   const total = subtotal + vat;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-6 mt-20">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
-        <h1 className="text-2xl font-bold text-center mb-4">Hóa đơn</h1>
+        <h1 className="text-2xl font-bold text-center mb-4 mt-4">Hóa đơn</h1>
         <table className="w-full text-left border-collapse">
           <thead>
             <tr>
@@ -122,7 +122,7 @@ const ShoppingCart = () => {
             <span>Tổng:</span>
             <span>${total.toFixed(2)}</span>
           </div>
-          <button className="mt-4 px-6 py-2 bg-orange-500 text-white font-bold rounded hover:bg-orange-600">
+          <button className="mt-4 px-6 py-2 bg-[#C7253E] text-white font-bold rounded hover:bg-orange-600">
             Thanh toán
           </button>
         </div>

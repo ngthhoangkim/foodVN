@@ -18,7 +18,7 @@ function Nav() {
           <Link to="/shopping-cart" className="text-[#C7253E] hover:text-[#FF6969]">
             <CiShoppingCart className="text-3xl" />
           </Link>
-          
+
           <a href="#" className="text-[#C7253E] hover:text-[#FF6969]">
             <CiUser className="text-3xl" />
           </a>
@@ -29,18 +29,16 @@ function Nav() {
         >
           <ul className="flex flex-col p-4 md:p-0 mt-4 text-xl font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white">
             <li>
-                 <Link to="/" className="block py-2 px-3 text-[#C7253E] rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#FF6969] md:p-0">
+              <Link to="/" className="block py-2 px-3 text-[#C7253E] rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#FF6969] md:p-0">
                 Trang chủ
-                </Link>
-            </li>
-            <li>
-              <Link to="/about" className="text-[#C7253E] hover:text-[#FF6969]">
-                Giới thiệu
               </Link>
             </li>
             <li>
+              <a href="#about" className="block py-2 px-3 text-[#C7253E] rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#FF6969] md:p-0">Giới thiệu</a>
+            </li>
+            <li>
               <a
-                href="#"
+                href="/menu"
                 className="block py-2 px-3 text-[#C7253E] rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#FF6969] md:p-0"
               >
                 Thực đơn
