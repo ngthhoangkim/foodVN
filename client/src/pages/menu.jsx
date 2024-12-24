@@ -50,7 +50,7 @@ const Menu = () => {
               <div className="text-lg font-bold text-gray-800">Fresh Lime</div>
               <div className="flex items-center gap-2">
                 <span className="text-orange-500">$38.00</span>
-                <span className="text-gray-400 line-through">$45.00</span>
+                {/* <span className="text-gray-400 line-through">$45.00</span> */}
               </div>
             </div>
           </div>
@@ -80,7 +80,7 @@ const Menu = () => {
               <div className="text-lg font-bold text-gray-800">Fresh Lime</div>
               <div className="flex items-center gap-2">
                 <span className="text-orange-500">$38.00</span>
-                <span className="text-gray-400 line-through">$45.00</span>
+                {/* <span className="text-gray-400 line-through">$45.00</span> */}
               </div>
             </div>
           </div>
@@ -110,7 +110,7 @@ const Menu = () => {
               <div className="text-lg font-bold text-gray-800">Fresh Lime</div>
               <div className="flex items-center gap-2">
                 <span className="text-orange-500">$38.00</span>
-                <span className="text-gray-400 line-through">$45.00</span>
+                {/* <span className="text-gray-400 line-through">$45.00</span> */}
               </div>
             </div>
           </div>
