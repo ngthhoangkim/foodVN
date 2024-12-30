@@ -30,7 +30,6 @@ module.exports = (sequelize, DataTypes) => {
       voucherID: DataTypes.INTEGER,
       customerID: DataTypes.INTEGER,
       tableID: DataTypes.INTEGER,
-      orderTime: DataTypes.DATE,
       status: DataTypes.STRING,
     },
     {

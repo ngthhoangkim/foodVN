@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "orderID",
         as: "order",
       });
-      OrderDetail.belongsTo(models.MenuItem, {
+      OrderDetail.belongsTo(models.Food, {
         foreignKey: "foodID",
         as: "food",
       });

@@ -39,10 +39,6 @@ module.exports = {
         onDelete: "CASCADE",
         allowNull: false,
       },
-      orderTime: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
       status: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -50,6 +46,7 @@ module.exports = {
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW 
       },
       updatedAt: {
         allowNull: false,
