@@ -9,14 +9,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      roleID: { 
+      roleID: {
         type: Sequelize.INTEGER,
-        allowNull: true, 
+        allowNull: false,
         references: {
-          model: "Roles", 
-          key: "id", 
+          model: "Roles",
+          key: "id",
         },
-        onUpdate: "CASCADE", 
+        onUpdate: "CASCADE",
         onDelete: "RESTRICT",
       },
       customerName: {
