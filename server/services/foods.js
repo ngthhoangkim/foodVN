@@ -1,27 +1,44 @@
 import db from "../models";
-
-// Tạo món ăn
-export const createFoodService = ({ name, price, categoryId }) =>
+// create food
+export const createFoodService = ({ name, categoryName, price, description }) =>
   new Promise(async (resolve, reject) => {
     try {
-      const category = await db.Category.findByPk(categoryId);
-      if (!category) {
-        resolve({ err: 1, msg: "Loại món ăn không tồn tại!" });
-        return;
-      }
-
-      const response = await db.Food.create({
-        itemName: name,
-        itemPrice: price,
-        categoryId: category.id, // Liên kết với category
+      const category = await db.Category.findOne({
+        where: { categoryName: categoryName },
       });
-      resolve({ err: 0, msg: "Thêm món ăn thành công!", data: response });
+      if (!category) {
+        return resolve({
+          err: 1,
+          msg: "Loại món ăn không tồn tại!",
+        });
+      }
+      const [food, created] = await db.Food.findOrCreate({
+        where: { name: name },
+        defaults: {
+          name: name,
+          categoryID: category.id,
+          price: price,
+          description: description,
+        },
+      });
+
+      if (created) {
+        resolve({
+          err: 0,
+          msg: "Thêm món ăn thành công!",
+          data: food,
+        });
+      } else {
+        resolve({
+          err: 1,
+          msg: "Món ăn đã tồn tại!",
+        });
+      }
     } catch (error) {
       reject(error);
     }
   });
-
-// Lấy tất cả món ăn
+//Get all food
 export const getAllFoodService = () =>
   new Promise(async (resolve, reject) => {
     try {
@@ -29,10 +46,11 @@ export const getAllFoodService = () =>
         include: [
           {
             model: db.Category,
-            as: "category", // Bao gồm thông tin danh mục
+            as: "category", 
             attributes: ["categoryName"],
           },
         ],
+        order: [["id", "ASC"]],
       });
       resolve({
         err: 0,
@@ -52,96 +70,80 @@ export const getFoodByIdService = (id) =>
         include: [
           {
             model: db.Category,
-            as: "category", // Bao gồm thông tin danh mục
+            as: "category", 
             attributes: ["categoryName"],
           },
         ],
       });
-      if (!food) {
-        resolve(null);
-        return;
+      if (food) {
+        resolve({
+          err: 0,
+          msg: "Lấy thông tin chi tiết món ăn thành công!",
+          data: food,
+        });
+      } else {
+        resolve({
+          err: 1,
+          msg: "Món ăn không tồn tại!",
+        });
       }
-      resolve(food);
     } catch (error) {
       reject(error);
     }
   });
-
-// Cập nhật món ăn
-export const updateFoodService = (id, { name, price, categoryId }) =>
+// Update food
+export const updateFoodService = (id, { name, categoryName, price, description }) =>
   new Promise(async (resolve, reject) => {
     try {
-      const food = await db.Food.findByPk(id, {
-        include: [
-          {
-            model: db.Category,
-            as: "category",
-            attributes: ["categoryName"],
-          },
-        ],
-      });
-
-      // Kiểm tra xem món ăn có tồn tại không
+      // Tìm món ăn theo ID
+      const food = await db.Food.findOne({ where: { id } });
       if (!food) {
-        resolve({ err: 1, msg: "Món ăn không tồn tại!" });
-        return;
-      }
-
-      // Kiểm tra nếu bạn muốn chỉ cho phép cập nhật nếu món ăn thuộc một loại cụ thể (ví dụ, categoryId = 2)
-      if (food.categoryId !== categoryId) {
-        resolve({
+        return resolve({
           err: 1,
-          msg: "Không thể cập nhật món ăn này vì thuộc loại khác!",
+          msg: "Món ăn không tồn tại!",
         });
-        return;
       }
 
-      // Tiến hành cập nhật món ăn nếu mọi điều kiện đều hợp lệ
+      let categoryID;
+      if (categoryName) {
+        const category = await db.Category.findOne({ where: { categoryName } });
+        if (!category) {
+          return resolve({
+            err: 1,
+            msg: "Loại không tồn tại!",
+          });
+        }
+        categoryID = category.id;
+      }
+      // Tạo dữ liệu cập nhật
       const updatedData = {
-        ...(name && { itemName: name }),
-        ...(price && { itemPrice: price }),
-        ...(categoryId && { categoryId }), // Cập nhật categoryId nếu có
+        ...(name && { name }),
+        ...(categoryID !== undefined && { categoryID }),
+        ...(price && { price }),
+        ...(description && { description }),
       };
+      // Cập nhật thông tin món ăn
+      await food.update(updatedData);
 
-      await db.Food.update(updatedData, { where: { id } });
-      resolve({ err: 0, msg: "Cập nhật món ăn thành công!" });
+      resolve({
+        err: 0,
+        msg: "Cập nhật món ăn thành công!",
+      });
     } catch (error) {
       reject(error);
     }
   });
-
-// Xóa món ăn
-export const deleteFoodService = (id, categoryId) =>
+// Delete food
+export const deleteFoodService = (id) =>
   new Promise(async (resolve, reject) => {
     try {
-      const food = await db.Food.findByPk(id, {
-        include: [
-          {
-            model: db.Category,
-            as: "category",
-            attributes: ["categoryName"],
-          },
-        ],
+      const response = await db.Food.destroy({ where: { id } });
+      resolve({
+        err: response ? 0 : 1,
+        msg: response
+          ? "Xóa món ăn thành công!"
+          : "Dữ liệu không tồn tại!",
       });
-
-      // Kiểm tra xem món ăn có tồn tại không
-      if (!food) {
-        resolve({ err: 1, msg: "Món ăn không tồn tại!" });
-        return;
-      }
-
-      // Kiểm tra nếu món ăn không thuộc loại muốn xóa (ví dụ, categoryId = 2)
-      if (food.categoryId !== categoryId) {
-        resolve({
-          err: 1,
-          msg: "Không thể xóa món ăn này vì thuộc loại khác!",
-        });
-        return;
-      }
-
-      // Tiến hành xóa món ăn nếu mọi điều kiện đều hợp lệ
-      await db.Food.destroy({ where: { id } });
-      resolve({ err: 0, msg: "Xóa món ăn thành công!" });
     } catch (error) {
       reject(error);
     }

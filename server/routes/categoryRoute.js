@@ -1,21 +1,18 @@
 import express from "express";
-import * as categoryController from "../controller/categoryController"; // Đảm bảo import đúng path
+import * as categoryController from "../controller/categoryController"; 
 
 const router = express.Router();
 
-// Route tạo loại món ăn
-router.post("/categories", categoryController.createCategoryController);
+// create category
+router.post("/", categoryController.createCategory);
 
-// Route lấy tất cả loại món ăn
-router.get("/categories", categoryController.getAllCategoriesController);
-
-// Route lấy loại món ăn theo ID
-router.get("/categories/:id", categoryController.getCategoryByIdController);
-
-// Route cập nhật loại món ăn
-router.put("/categories/:id", categoryController.updateCategoryController);
-
-// Route xóa loại món ăn
-router.delete("/categories/:id", categoryController.deleteCategoryController);
+// get category
+router.get("/", categoryController.getAllCategory);
+// Rget category by id
+router.get("/:id", categoryController.getOneCategory);
+// update category
+router.put("/:id", categoryController.updateCategory);
+// delete category
+router.delete("/:id", categoryController.deleteCategory);
 
 export default router;

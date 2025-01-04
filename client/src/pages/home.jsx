@@ -1,8 +1,15 @@
-import Nav from "../components/nav";
-import About from "./about";
-import { motion } from "motion/react";
+// src/pages/Home.js
+import Nav from "../containers/public/nav";
+import About from "./about"; // Import component About
+import { motion } from "framer-motion";
+import { useRef } from "react";
 
 function Home() {
+  const aboutRef = useRef(null);
+  const scrollToAbout = () => {
+    aboutRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); // Cuộn đến phần giới thiệu ngay đầu
+  };
+
   return (
     <div>
       {/* navbar */}
@@ -22,25 +29,29 @@ function Home() {
         <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
         <div className="w-full space-y-5 z-20 relative flex flex-col items-center">
           <h1
-            className="text-[#FABC3F] font-semibold text-6xl text-center"
+            className="text-primary font-semibold text-6xl text-center"
             style={{ lineHeight: "1.5", letterSpacing: "0.05em" }}
           >
             Thưởng thức hương vị Việt đậm đà trong không gian ấm cúng tại nhà
             hàng của chúng tôi.
           </h1>
-          <button className="bg-[#C7253E] opacity-80 text-white py-3 px-10 rounded-full font-semibold text-lg hover:bg-[#FF6969] mt-5">
+          <button
+            className="bg-accent opacity-80 text-white py-3 px-10 rounded-full font-semibold text-lg hover:bg-accent2 mt-5"
+            onClick={scrollToAbout} // Khi bấm nút sẽ cuộn đến phần giới thiệu
+          >
             Gọi món ngay
           </button>
         </div>
       </div>
       {/* about */}
       <motion.div
+        ref={aboutRef} // Tham chiếu phần giới thiệu
         id="about"
-        className="my-8 flex items-center justify-center"
-        initial={{ opacity: 0, y: 50 }} // Bắt đầu thấp một chút (50px)
-        whileInView={{ opacity: 1, y: 0 }} // Hoạt ảnh tới vị trí bình thường
-        transition={{ duration: 0.5 }}
-        viewport={{ once: true }} // Chỉ kích hoạt một lần khi vào tầm nhìn
+        className="flex items-center justify-center relative z-30 pt-32"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        viewport={{ once: true }}
       >
         <About />
       </motion.div>

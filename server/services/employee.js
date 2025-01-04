@@ -126,7 +126,7 @@ export const getOneEmployeeService = (id) =>
     }
   });
 //update employee
-export const updateEmployeeService = (id, { name, phone, password }) =>
+export const updateEmployeeService = (id, { name, phone }) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await db.Employee.findOne({
@@ -141,7 +141,6 @@ export const updateEmployeeService = (id, { name, phone, password }) =>
         const updatedData = {
           ...(name && { employeeName: name }),
           ...(phone && { employeePhone: phone }),
-          ...(password && { password: hashPassword(password) }),
         };
 
         await db.Employee.update(updatedData, {

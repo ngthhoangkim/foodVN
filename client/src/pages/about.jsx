@@ -1,8 +1,11 @@
+// src/pages/About.js
+import React from "react";
+
 function About() {
     return (
-        <div className="m-10 flex flex-col items-center text-center">
+        <div className="flex flex-col items-center text-center">
             <div className="max-w-7xl">
-                <h1 className="text-4xl text-[#FABC3F] font-bold mb-2">GIỚI THIỆU</h1>
+                <h1 className="text-4xl text-primary font-bold mb-2">GIỚI THIỆU</h1>
                 <p className="text-xl text-gray-600 mb-5">
                     Tại đây, bạn sẽ được thưởng thức các món ăn truyền thống được chế biến từ nguyên liệu tươi ngon nhất.
                     Không gian ấm cúng và dịch vụ tận tâm của chúng tôi sẽ mang lại trải nghiệm khó quên.
@@ -57,5 +60,4 @@ function About() {
         </div>
     );
 }
-
 export default About;

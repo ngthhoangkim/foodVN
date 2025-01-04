@@ -1,108 +1,108 @@
 import db from "../models";
-import { Op } from "sequelize";
 
-// Create menu item
-export const createMenuItemService = ({ name, price, categoryId }) =>
+// Create category
+export const createCategoryService = ({ name }) =>
   new Promise(async (resolve, reject) => {
     try {
-      const category = await db.Category.findByPk(categoryId);
-      if (!category) {
+      const [category, created] = await db.Category.findOrCreate({
+        where: { categoryName: name },
+        defaults: { categoryName: name },
+      });
+
+      if (created) {
+        resolve({
+          err: 0,
+          msg: "Thêm loại món ăn thành công!",
+          data: category,
+        });
+      } else {
         resolve({
           err: 1,
-          msg: "Loại món ăn không tồn tại!",
+          msg: "Loại món ăn đã tồn tại!",
         });
-        return;
       }
-
-      const response = await db.MenuItem.create({
-        itemName: name,
-        itemPrice: price,
-        categoryId: category.id,
-      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+// Get all categoryy
+export const getAllCategoryService = () =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.Category.findAll({});
       resolve({
         err: 0,
-        msg: "Thêm món ăn thành công!",
+        msg: "Lấy danh sách loại thành công!",
         data: response,
       });
     } catch (error) {
       reject(error);
     }
   });
-
-// Get all menu items by category
-export const getMenuItemsByCategoryService = (categoryId) =>
+// Get one category
+export const getOneCategoryService = (id) =>
   new Promise(async (resolve, reject) => {
     try {
-      const category = await db.Category.findByPk(categoryId);
-      if (!category) {
+      const response = await db.Category.findOne({
+        where: { id },
+        attributes: ["id", "categoryName"],
+      });
+      if (response) {
+        resolve({
+          err: 0,
+          msg: "Lấy thông tin loại thành công!",
+          data: response,
+        });
+      } else {
         resolve({
           err: 1,
-          msg: "Loại món ăn không tồn tại!",
+          msg: "Loại không tồn tại!",
         });
-        return;
       }
-
-      const response = await db.MenuItem.findAll({
-        where: { categoryId },
-        include: [
-          {
-            model: db.Category,
-            as: "category",
-            attributes: ["categoryName"],
-          },
-        ],
-        order: [["id", "ASC"]],
-      });
-      resolve({
-        err: 0,
-        msg: "Lấy danh sách món ăn thành công!",
-        data: response,
-      });
     } catch (error) {
       reject(error);
     }
   });
-
-// Update menu item
-export const updateMenuItemService = (id, { name, price, categoryId }) =>
+// Update category
+export const updateCategoryService = (id, { name }) =>
   new Promise(async (resolve, reject) => {
     try {
-      const menuItem = await db.MenuItem.findByPk(id);
-      if (!menuItem) {
-        resolve({
-          err: 1,
-          msg: "Món ăn không tồn tại!",
-        });
-        return;
-      }
-
-      const updatedData = {
-        ...(name && { itemName: name }),
-        ...(price && { itemPrice: price }),
-        ...(categoryId && { categoryId }),
-      };
-
-      await db.MenuItem.update(updatedData, {
+      const response = await db.Category.findOne({
         where: { id },
       });
+      if (!response) {
+        resolve({
+          err: 1,
+          msg: "Loại không tồn tại!",
+        });
+      } else {
+        const updatedData = {
+          ...(name && { categoryName: name }),
+        };
 
-      resolve({
-        err: 0,
-        msg: "Cập nhật món ăn thành công!",
-      });
+        await db.Category.update(updatedData, {
+          where: { id },
+        });
+
+        resolve({
+          err: 0,
+          msg: "Cập nhật loại thành công!",
+        });
+      }
     } catch (error) {
       reject(error);
     }
   });
-
-// Delete menu item
-export const deleteMenuItemService = (id) =>
+// Delete category
+export const deleteCategoryService = (id) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.MenuItem.destroy({ where: { id } });
+      const response = await db.Category.destroy({ where: { id } });
       resolve({
         err: response ? 0 : 1,
-        msg: response ? "Xóa món ăn thành công!" : "Món ăn không tồn tại!",
+        msg: response
+          ? "Xóa loạiloại thành công!"
+          : "Dữ liệu không tồn tại!",
       });
     } catch (error) {
       reject(error);

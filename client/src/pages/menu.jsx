@@ -1,4 +1,4 @@
-import Nav from "../components/nav";
+import Nav from "../containers/public/nav";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
@@ -135,7 +135,7 @@ const Menu = () => {
         <div className="w-1/5 px-10 pt-10">
           <div className="bg-white shadow-md rounded-md p-6">
             <div className="mb-4 relative">
-              <input type="text" placeholder="Tìm kiếm..." className="w-full p-2 pl-3 pr-10 border border-gray-300 rounded-md"/>
+              <input type="text" placeholder="Tìm kiếm..." className="w-full p-2 pl-3 pr-10 border border-gray-300 rounded-md" />
               <button type="button" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600">
                 <FontAwesomeIcon icon={faSearch} className="w-5 h-5" />
               </button>
@@ -171,6 +171,6 @@ const Menu = () => {
         </div>
       </div>
     </div>
-);
+  );
 };
 export default Menu;
