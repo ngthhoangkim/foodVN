@@ -1,10 +1,8 @@
-import Nav from "../containers/public/nav";
+import Nav from "./nav";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 const Menu = () => {
-
-
   return (
     <div className="relative w-full bg-gray-50">
       {/* Fixed Navigation */}

@@ -1,6 +1,5 @@
-// src/pages/About.js
 import React from "react";
-
+ 
 function About() {
     return (
         <div className="flex flex-col items-center text-center">
