@@ -1,16 +1,29 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import React, { useState, useEffect } from "react";
 import Button from "../../components/button";
-import { useLocation, Link } from "react-router-dom";
-import { apiRegister } from "../../services/auth";
+import { useLocation, Link,useNavigate } from "react-router-dom";
+import * as actions from "../../store/actions";
+import { useDispatch,useSelector } from "react-redux";
+import { InputForm } from "../../components/inputForm";
+import Swal from 'sweetalert2'
 
 const Login = () => {
     const location = useLocation();
-
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
+    
+    const { isLoggedIn, msg, update } = useSelector(state => state.auth)
     const [isRegister, setIsRegister] = useState(location.state?.flag);
+    const [invalidFields, setInvalidFields] = useState([]);
     const [showPassword, setShowPassword] = useState(false);
-    const [payload, setPayload] = useState({});
-    const [birthDate, setBirthDate] = useState(null);
+    const [payload, setPayload] = useState({
+        email: '',
+        name: '',
+        phone: '',
+        birthday: '',
+        password: '',
+    });
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -20,9 +33,100 @@ const Login = () => {
         setIsRegister(location.state?.flag);
     }, [location.state?.flag]);
 
+    useEffect(() => {
+        isLoggedIn && navigate('/')
+    }, [isLoggedIn])
+
+    useEffect(() => {
+        msg && Swal.fire('Oops!', msg, 'error')
+    }, [msg, update])
+
+    //xử lý sumit
     const handleSumit = async () => {
-        const response = await apiRegister(payload);
-        console.log(response);
+        let finalPayload = isRegister ? payload : {
+            phone: payload.phone,
+            password: payload.password
+        }
+        const formattedPayload = {
+            ...payload,
+            birthday: new Date(payload.birthday).toLocaleDateString('en-GB'),
+        };
+        let invalids = validate(finalPayload);
+        if (invalids.length === 0) {
+            isRegister
+                ? dispatch(actions.register(formattedPayload))
+                : dispatch(actions.login(finalPayload));
+        } 
+    };
+    //thông báo lỗi 
+    const validate = (payload) => {
+        let invalids = [];
+        let fields = Object.entries(payload);
+
+        fields.forEach(([key, value]) => {
+            if (value.trim() === "") {
+                invalids.push({
+                    name: key,
+                    message: "Bạn không được bỏ trống trường này.",
+                });
+            } else {
+                switch (key) {
+                    case "password":
+                        if (value.length < 6) {
+                            invalids.push({
+                                name: key,
+                                message: "Mật khẩu phải có tối thiểu 6 kí tự.",
+                            });
+                        }
+                        break;
+                    case "phone":
+                        if (!/^\d{10,11}$/.test(value)) {
+                            invalids.push({
+                                name: key,
+                                message: "Số điện thoại không hợp lệ!",
+                            });
+                        }
+                        break;
+                    case "email":
+                        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
+                            invalids.push({
+                                name: key,
+                                message: "Email không hợp lệ.",
+                            });
+                        }
+                        break;
+                    case "birthday":
+                        const date = new Date(value);
+                        if (isNaN(date.getTime())) {
+                            invalids.push({
+                                name: key,
+                                message: "Bạn chưa điền ngày sinh!",
+                            });
+                        }
+                        break;
+                    case "name":
+                        if (value.length > 20) {
+                            invalids.push({
+                                name: key,
+                                message: "Tên đăng nhập không được vượt quá 20 kí tự.",
+                            });
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        if (isRegister && payload.password !== confirmPassword) {
+            invalids.push({
+                name: "confirmPassword",
+                message: "Mật khẩu không khớp.",
+            });
+        }
+
+        setInvalidFields(invalids);
+        return invalids;
     };
 
     return (
@@ -45,68 +149,68 @@ const Login = () => {
                             <img src="assets/img/logo.png" alt="Logo" className="w-24 h-auto" />
                         </Link>
                     </div>
-                    <form
-                        className="flex flex-col space-y-4 overflow-y-auto"
-                        style={{ maxHeight: "calc(100vh - 180px)" }} 
-                    >
+                    <form className="flex flex-col space-y-4 overflow-y-auto" style={{ maxHeight: "calc(100vh - 180px)" }}>
                         {isRegister && (
-                            <input
+                            <InputForm
                                 type="email"
+                                value={payload.email}
+                                onChange={(e) => setPayload({ ...payload, email: e.target.value })}
                                 placeholder="Email"
-                                className="bg-white text-black border border-gray-300 rounded-md p-2"
+                                errorMessage={invalidFields.find((field) => field.name === "email")?.message}
                             />
                         )}
-                        {isRegister && (
-                            <input
-                                type="text"
-                                placeholder="Họ và tên"
-                                className="bg-white text-black border border-gray-300 rounded-md p-2"
-                            />
-                        )}
-                        <input
-                            type="phone"
-                            placeholder="Số điện thoại"
-                            className="bg-white text-black border border-gray-300 rounded-md p-2"
-                        />
-                        {isRegister && (
-                            <input
-                                id="birthDate"
-                                type="date"
-                                value={birthDate || ""}
-                                onChange={(e) => setBirthDate(e.target.value)}
-                                className="bg-white text-black border border-gray-300 rounded-md p-2"
-                            />
-                        )}
-                        <div className="relative">
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                placeholder="Mật khẩu"
-                                className="bg-white text-black border border-gray-300 rounded-md p-2 w-full"
-                            />
-                            <button
-                                type="button"
-                                className="absolute right-3 top-2 text-gray-500"
-                                onClick={togglePasswordVisibility}
-                            >
-                                <i className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
-                            </button>
-                        </div>
-                        {isRegister && (
-                            <div className="relative">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Xác nhận mật khẩu"
-                                    className="bg-white text-black border border-gray-300 rounded-md p-2 w-full"
+                        <div className="flex space-x-4">
+                            {isRegister && (
+                                <InputForm
+                                    value={payload.name}
+                                    onChange={(e) => setPayload({ ...payload, name: e.target.value })}
+                                    placeholder="Tên đăng nhập"
+                                    errorMessage={invalidFields.find((field) => field.name === "name")?.message}
+                                    className="flex-1"
                                 />
-                                <button
-                                    type="button"
-                                    className="absolute right-3 top-2 text-gray-500"
-                                    onClick={togglePasswordVisibility}
-                                >
-                                    <i className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
-                                </button>
-                            </div>
-                        )}
+                            )}
+                            {isRegister && (
+                                <InputForm
+                                    type="date"
+                                    value={payload.birthday}
+                                    onChange={(e) => setPayload({ ...payload, birthday: e.target.value })}
+                                    placeholder="Ngày sinh"
+                                    errorMessage={invalidFields.find((field) => field.name === "birthday")?.message}
+                                    className="flex-1"
+                                />
+                            )}
+                        </div>
+                        <InputForm
+                            type="phone"
+                            value={payload.phone}
+                            onChange={(e) => setPayload({ ...payload, phone: e.target.value })}
+                            placeholder="Số điện thoại"
+                            errorMessage={invalidFields.find((field) => field.name === "phone")?.message}
+                        />
+                        <div className="flex space-x-4">
+                            <InputForm
+                                isPassword
+                                value={payload.password}
+                                onChange={(e) => setPayload({ ...payload, password: e.target.value })}
+                                placeholder="Mật khẩu"
+                                togglePasswordVisibility={togglePasswordVisibility}
+                                showPassword={showPassword}
+                                errorMessage={invalidFields.find((field) => field.name === "password")?.message}
+                                className="flex-1"
+                            />
+                            {isRegister && (
+                                <InputForm
+                                    isPassword
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    placeholder="Xác nhận mật khẩu"
+                                    togglePasswordVisibility={togglePasswordVisibility}
+                                    showPassword={showPassword}
+                                    errorMessage={invalidFields.find((field) => field.name === "confirmPassword")?.message}
+                                    className="flex-1"
+                                />
+                            )}
+                        </div>
                         <Button
                             text={isRegister ? "Đăng ký" : "Đăng nhập"}
                             bgColor="bg-primary"
