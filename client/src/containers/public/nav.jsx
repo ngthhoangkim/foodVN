@@ -16,13 +16,13 @@ const Nav = () => {
   }, [])
   const handleLogout = () => {
     dispatch(actions.logout()); // Gọi action logout từ Redux
-    navigate(path.HOME); // Quay về trang chủ sau khi đăng xuất
+    navigate('/'); 
   };
 
   return (
     <nav className="bg-background relative px-4 py-4 flex justify-between items-center">
       {/* logo */}
-      <Link className="text-3xl font-bold leading-none ml-10" to={path.HOME}>
+      <Link className="text-3xl font-bold leading-none ml-10" to={'/'}>
         <img
           src="assets/img/logo-small.png"
           alt="logo"
@@ -31,8 +31,8 @@ const Nav = () => {
       </Link>
       {/* menu */}
       <ul className="flex-grow flex justify-center space-x-20 ml-24">
-        <li><Link className="text-xl text-accent hover:text-accent2" to={path.HOME}>Trang chủ</Link></li>
-        <li><a className="text-xl text-accent hover:text-accent2" href="#about">Giới thiệu</a></li>
+        <li><Link className="text-xl text-accent hover:text-accent2" to={'/'}>Trang chủ</Link></li>
+        <li><a className="text-xl text-accent hover:text-accent2" href="/#about">Giới thiệu</a></li>
         <li><Link className="text-xl text-accent hover:text-accent22" to={path.MENU}>Thực đơn</Link></li>
       </ul>
       <div className="flex space-x-3 md:space-x-0 rtl:space-x-reverse gap-8">

@@ -41,75 +41,63 @@ export const registerService = ({ email, name, phone, password, birthday }) =>
       reject(error);
     }
   });
-// login for customer
-export const loginService = ({ phone, password }) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const response = await db.Customer.findOne({
-        where: { customerPhone: phone },
-        include: [{ model: db.Role, as: "role", attributes: ["roleName"] }],
-        nest: true,
-        raw: true,
-      });
-      const isCorrectPassword =
-        response && bcrypt.compareSync(password, response.password);
-      const token =
-        isCorrectPassword &&
-        response.role &&
-        jwt.sign(
-          { id: response.id, phone: response.customerPhone },
-          process.env.JWT_SECRET,
-          { expiresIn: "2d" }
-        );
-      resolve({
-        err: token ? 0 : 2,
-        msg: token
-          ? "Đăng nhập thành công!"
-          : response
-          ? "Mật khẩu sai!"
-          : "Tài khoản không tồn tại!",
-        token: token || null,
-        role: token ? response.role.roleName : null,
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
-//login for employee
-export const loginEmployeeService = ({ phone, password }) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const response = await db.Employee.findOne({
+// login
+export const loginService = async ({ phone, password }) => {
+  try {
+    // Tìm kiếm trong bảng Customer
+    let response = await db.Customer.findOne({
+      where: { customerPhone: phone },
+      include: [{ model: db.Role, as: "role", attributes: ["roleName"] }],
+      nest: true,
+      raw: true,
+    });
+
+    let userType = "customer"; // Mặc định là khách hàng
+
+    // Nếu không tìm thấy, tìm trong bảng Employee
+    if (!response) {
+      response = await db.Employee.findOne({
         where: { employeePhone: phone },
         include: [{ model: db.Role, as: "role", attributes: ["roleName"] }],
         nest: true,
         raw: true,
       });
-      const isCorrectPassword =
-        response && bcrypt.compareSync(password, response.password);
-      const token =
-        isCorrectPassword &&
-        response.role &&
-        jwt.sign(
-          {
-            id: response.id,
-            phone: response.employeePhone,
-            role: response.role.roleName,
-          },
-          process.env.JWT_SECRET,
-          { expiresIn: "2d" }
-        );
-      resolve({
-        err: token ? 0 : 2,
-        msg: token
-          ? "Đăng nhập thành công!"
-          : response
-          ? "Mật khẩu sai!"
-          : "Tài khoản không tồn tại!",
-        token: token || null,
-        role: token ? response.role.roleName : null,
-      });
-    } catch (error) {
-      reject(error);
+      userType = "employee";
     }
-  });
+
+    // Nếu vẫn không tìm thấy, trả lỗi
+    if (!response) {
+      return { err: 1, msg: "Tài khoản không tồn tại!" };
+    }
+
+    // Kiểm tra mật khẩu
+    const isCorrectPassword = bcrypt.compareSync(password, response.password);
+    if (!isCorrectPassword) {
+      return { err: 2, msg: "Mật khẩu sai!" };
+    }
+
+    // Tạo token
+    const token = jwt.sign(
+      {
+        id: response.id,
+        phone:
+          userType === "customer"
+            ? response.customerPhone
+            : response.employeePhone,
+        role: response.role.roleName,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "2d" }
+    );
+
+    return {
+      err: 0,
+      msg: "Đăng nhập thành công!",
+      token,
+      userType,
+      role: response.role.roleName,
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};

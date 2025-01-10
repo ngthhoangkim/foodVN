@@ -7,6 +7,4 @@ const router = express.Router();
 router.post('/login', authController.login);
 //register
 router.post('/register', authController.register);
-//login for employee
-router.post('/loginEmployee', authController.loginEmployee);
 export default router;

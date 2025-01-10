@@ -6,13 +6,14 @@ import * as actions from "../../store/actions";
 import { useDispatch,useSelector } from "react-redux";
 import { InputForm } from "../../components/inputForm";
 import Swal from 'sweetalert2'
+import { path } from "../../ultils/constant";
 
 const Login = () => {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate()
     
-    const { isLoggedIn, msg, update } = useSelector(state => state.auth)
+    const { isLoggedIn, msg, update,role  } = useSelector(state => state.auth)
     const [isRegister, setIsRegister] = useState(location.state?.flag);
     const [invalidFields, setInvalidFields] = useState([]);
     const [showPassword, setShowPassword] = useState(false);
@@ -34,11 +35,17 @@ const Login = () => {
     }, [location.state?.flag]);
 
     useEffect(() => {
-        isLoggedIn && navigate('/')
-    }, [isLoggedIn])
+        if (isLoggedIn) {
+            if (role === 'customer') {
+                navigate('/');
+            } else if (role === 'admin') {
+                navigate(path.ADMIN);
+            }
+        }
+    }, [isLoggedIn, role, navigate]);
 
     useEffect(() => {
-        msg && Swal.fire('Oops!', msg, 'error')
+        msg && Swal.fire('Lỗi!', msg, 'error')
     }, [msg, update])
 
     //xử lý sumit
@@ -80,7 +87,7 @@ const Login = () => {
                         }
                         break;
                     case "phone":
-                        if (!/^\d{10,11}$/.test(value)) {
+                        if (!/^\d{7,11}$/.test(value)) {
                             invalids.push({
                                 name: key,
                                 message: "Số điện thoại không hợp lệ!",

@@ -1,8 +1,9 @@
 export const path = {
-    HOME : '/',
-    HOME__PAGE: ':page',
+    HOME : '/*',
+    HOME_PAGE: ':page',
     LOGIN : 'login',
     SIGNUP : 'signup',
     SHOPPING_CART : 'shoppingCart',
-    MENU : 'menu'
+    MENU : 'menu',
+    ADMIN : '/admin/'
 }
