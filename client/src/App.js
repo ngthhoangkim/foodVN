@@ -3,8 +3,9 @@ import { Route, Routes } from "react-router-dom";
 import { path } from "./ultils/constant";
 import "./css/App.css";
 import { Home, Login, Menu, ShoppingCart } from "./containers/public";
-import { Admin } from "./containers/admin";
+import { Admin, AdminHome, ChefStaff, Customer, Food, Order, OrderStaff } from "./containers/admin";
 import HomePage from "./containers/public/homePage";
+import Profile from "./containers/public/profile";
 
 function App() {
   return (
@@ -12,14 +13,20 @@ function App() {
       <Routes>
         {/*các trang dành cho user */}
         <Route path={path.HOME} element={<Home />}>
-          <Route path="*" element={<HomePage />} />
+          <Route index element={<HomePage />} />
           <Route path={path.LOGIN} element={<Login />} />
           <Route path={path.SHOPPING_CART} element={<ShoppingCart />} />
+          <Route path={path.PROFILE} element={<Profile />} />
           <Route path={path.MENU} element={<Menu />} />
         </Route>
         {/* các trang dành cho admin */}
-        <Route path={path.ADMIN} element={<Admin />}> 
-          
+        <Route path={path.ADMIN} element={<Admin />}>
+          <Route index element={<AdminHome />} />
+          <Route path={path.ADMIN_ORDER} element={<Order />} />
+          <Route path={path.ADMIN_FOOD} element={<Food />} />
+          <Route path={path.ADMIN_CUSTOMER} element={<Customer />} />
+          <Route path={path.ADMIN_EMPLOYEE} element={<OrderStaff />} />
+          <Route path={path.ADMIN_CHEF} element={<ChefStaff />} />
         </Route>
       </Routes>
     </div>

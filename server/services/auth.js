@@ -87,7 +87,7 @@ export const loginService = async ({ phone, password }) => {
         role: response.role.roleName,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "2d" }
+      { expiresIn: "30d" }
     );
 
     return {

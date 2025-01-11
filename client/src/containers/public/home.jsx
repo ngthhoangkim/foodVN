@@ -21,7 +21,7 @@ const Home = () => {
       <div className="fixed top-0 left-0 w-full z-50">
         <Nav />
       </div>
-      {/* home page */}
+      {/* page */}
       <div>
         <Outlet />
       </div>

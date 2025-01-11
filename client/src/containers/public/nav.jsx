@@ -12,11 +12,11 @@ const Nav = () => {
   const dispatch = useDispatch();
   const { isLoggedIn } = useSelector(state => state.auth)
   const goLogin = useCallback((flag) => {
-    navigate(path.LOGIN, { state: { flag } })
+    navigate(`/${path.LOGIN}`, { state: { flag } })
   }, [])
   const handleLogout = () => {
     dispatch(actions.logout()); // Gọi action logout từ Redux
-    navigate('/'); 
+    navigate('/');
   };
 
   return (
@@ -39,10 +39,10 @@ const Nav = () => {
         {/* Hiển thị icon giỏ hàng và người dùng khi đã đăng nhập */}
         {isLoggedIn ? (
           <>
-            <Link to={path.SHOPPING_CART} className="text-accent hover:text-accent2">
+            <Link to={`/${path.SHOPPING_CART}`} className="text-accent hover:text-accent2">
               <CiShoppingCart className="text-3xl" />
             </Link>
-            <Link to={path.PROFILE} className="text-accent hover:text-accent2">
+            <Link to={`/${path.PROFILE}`} className="text-accent hover:text-accent2">
               <CiUser className="text-3xl" />
             </Link>
             <button

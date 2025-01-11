@@ -1,12 +1,11 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import React, { useState, useEffect } from "react";
-import Button from "../../components/button";
 import { useLocation, Link,useNavigate } from "react-router-dom";
 import * as actions from "../../store/actions";
 import { useDispatch,useSelector } from "react-redux";
-import { InputForm } from "../../components/inputForm";
+import { InputForm, Button } from "../../components";
 import Swal from 'sweetalert2'
-import { path } from "../../ultils/constant";
+
 
 const Login = () => {
     const location = useLocation();
@@ -39,7 +38,7 @@ const Login = () => {
             if (role === 'customer') {
                 navigate('/');
             } else if (role === 'admin') {
-                navigate(path.ADMIN);
+                navigate('/admin');
             }
         }
     }, [isLoggedIn, role, navigate]);

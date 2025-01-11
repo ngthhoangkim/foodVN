@@ -36,4 +36,4 @@ export const InputForm = ({
     );
 };
 
-
+export default InputForm

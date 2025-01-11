@@ -1,9 +1,16 @@
 export const path = {
-    HOME : '/*',
-    HOME_PAGE: ':page',
-    LOGIN : 'login',
-    SIGNUP : 'signup',
-    SHOPPING_CART : 'shoppingCart',
-    MENU : 'menu',
-    ADMIN : '/admin/'
-}
+    HOME: "/*",
+    HOME_PAGE: ":page",
+    LOGIN: "login",
+    SIGNUP: "signup",
+    SHOPPING_CART: "shoppingCart",
+    PROFILE: 'profile',
+    MENU: "menu",
+    ADMIN: "admin/*",
+    HOME_ADMIN: "admin/:page",
+    ADMIN_ORDER: "order",
+    ADMIN_FOOD: "food",
+    ADMIN_CUSTOMER: "customer",
+    ADMIN_EMPLOYEE: "employee",
+    ADMIN_CHEF: "chef",
+};
