@@ -1,8 +1,8 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import React, { useState, useEffect } from "react";
-import { useLocation, Link,useNavigate } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import * as actions from "../../store/actions";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { InputForm, Button } from "../../components";
 import Swal from 'sweetalert2'
 
@@ -11,8 +11,8 @@ const Login = () => {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate()
-    
-    const { isLoggedIn, msg, update,role  } = useSelector(state => state.auth)
+
+    const { isLoggedIn, msg, update, role } = useSelector(state => state.auth)
     const [isRegister, setIsRegister] = useState(location.state?.flag);
     const [invalidFields, setInvalidFields] = useState([]);
     const [showPassword, setShowPassword] = useState(false);
@@ -49,21 +49,47 @@ const Login = () => {
 
     //xử lý sumit
     const handleSumit = async () => {
-        let finalPayload = isRegister ? payload : {
-            phone: payload.phone,
-            password: payload.password
-        }
+        let finalPayload = isRegister
+            ? payload
+            : {
+                  phone: payload.phone,
+                  password: payload.password,
+              };
+    
         const formattedPayload = {
             ...payload,
-            birthday: new Date(payload.birthday).toLocaleDateString('en-GB'),
+            birthday: new Date(payload.birthday).toLocaleDateString("en-GB"),
         };
+    
         let invalids = validate(finalPayload);
         if (invalids.length === 0) {
-            isRegister
-                ? dispatch(actions.register(formattedPayload))
-                : dispatch(actions.login(finalPayload));
-        } 
+            if (isRegister) {
+                // Gọi hành động đăng ký
+                dispatch(actions.register(formattedPayload))
+                    .then(() => {
+                        // Hiển thị thông báo thành công
+                        Swal.fire("Thành công!", "Đăng ký tài khoản thành công.", "success");
+                        
+                        // Reset form
+                        setPayload({
+                            email: "",
+                            name: "",
+                            phone: "",
+                            birthday: "",
+                            password: "",
+                        });
+                        setConfirmPassword("");
+                    })
+                    .catch((error) => {
+                        Swal.fire("Lỗi!", error.message || "Đăng ký thất bại.", "error");
+                    });
+            } else {
+                // Gọi hành động đăng nhập
+                dispatch(actions.login(finalPayload));
+            }
+        }
     };
+    
     //thông báo lỗi 
     const validate = (payload) => {
         let invalids = [];

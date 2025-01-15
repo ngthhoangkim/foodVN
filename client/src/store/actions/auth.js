@@ -33,6 +33,7 @@ export const login = (payload) => async (dispatch) => {
         data: {
           token: response.data.token,
           role: response.data.role,
+          id : response.data.id,
         },
       });
     } else {

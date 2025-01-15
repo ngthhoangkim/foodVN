@@ -44,7 +44,7 @@ export const getOneEmployee = async (req, res) => {
     const response = await employeeServices.getOneEmployeeService(id)
     return res.status(200).json(response)
   } catch (error) {
-    res.status(500).json({ ["Fail at get all employee:"]: error.message });
+    res.status(500).json({ ["Fail at get one employee:"]: error.message });
   }
 };
 //delete employee
@@ -54,7 +54,7 @@ export const deleteEmployee = async (req, res) => {
     const response = await employeeServices.deleteEmployeeService(id)
     return res.status(200).json(response)
   } catch (error) {
-    res.status(500).json({ ["Fail at get all employee:"]: error.message });
+    res.status(500).json({ ["Fail at delete employee:"]: error.message });
   }
 };
 //update employee
@@ -64,6 +64,6 @@ export const updateEmployee = async (req, res) => {
     const response = await employeeServices.updateEmployeeService(id, req.body);
     return res.status(200).json(response);
   } catch (error) {
-    return res.status(500).json({ err: 1, msg: "Có lỗi xảy ra!", error });
+    res.status(500).json({ ["Fail at update employee:"]: error.message });
   }
 };

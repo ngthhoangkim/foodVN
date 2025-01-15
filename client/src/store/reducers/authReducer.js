@@ -14,7 +14,8 @@ const authReducer = (state = initState, action) => {
         ...state,
         isLoggedIn: true,
         token: action.data.token,
-        role: action.data.role,  
+        role: action.data.role, 
+        id : action.data.id, 
         msg: ''
       };
     case actionTypes.REGISTER_FAIL:

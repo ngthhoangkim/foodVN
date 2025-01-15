@@ -96,6 +96,7 @@ export const loginService = async ({ phone, password }) => {
       token,
       userType,
       role: response.role.roleName,
+      id: response.id, 
     };
   } catch (error) {
     throw new Error(error.message);
