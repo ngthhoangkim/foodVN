@@ -38,6 +38,7 @@ export const getAllTableService = () =>
         err: 0,
         msg: "Lấy danh sách bàn thành công!",
         data: tables,
+        count: tables.length
       });
     } catch (error) {
       reject(error);

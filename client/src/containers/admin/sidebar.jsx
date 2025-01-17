@@ -7,12 +7,12 @@ const Sidebar = () => {
         <div className="bg-gray-100 w-64 h-screen p-5">
             <Link to={`/admin`}>
                 <img
-                    src="assets/img/logo.png"
+                    src={`${process.env.PUBLIC_URL}/assets/img/logo.png`}
                     alt="logo"
                     className="w-20 h-auto ml-8 mb-8"
                 />
             </Link>
-            <ul className="space-y-12">
+            <ul className="space-y-10">
                 <li>
                     <Link
                          to={`/admin`}
@@ -34,7 +34,15 @@ const Sidebar = () => {
                          to={`/admin/${path.ADMIN_FOOD}`}
                         className="text-gray-600 text-xl font-medium hover:text-yellow-500"
                     >
-                        🍔 Thực đơn
+                        🍽️ Thực đơn
+                    </Link>
+                </li>
+                <li>
+                    <Link
+                         to={`/admin/${path.ADMIN_TABLE}`}
+                        className="text-gray-600 text-xl font-medium hover:text-yellow-500"
+                    >
+                        🪑 Quản lý bàn
                     </Link>
                 </li>
                 <li>

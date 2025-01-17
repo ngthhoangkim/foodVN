@@ -18,6 +18,7 @@ export const getAllCustomerService = () =>
         err: 0,
         msg: "Lấy danh sách khách hàng thành công!",
         data: response,
+        count: response.length
       });
     } catch (error) {
       reject(error);

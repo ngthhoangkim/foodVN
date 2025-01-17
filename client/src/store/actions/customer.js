@@ -1,7 +1,6 @@
 import { apiGetAllCustomer, apiGetOneCustomer, apiUpdateCustomer } from "../../services/customer"
 import actionTypes from "./actionTypes"
 
-
 //get all customer
 export const getAllCustomer = () => async (dispatch) => {
   try {
@@ -9,7 +8,8 @@ export const getAllCustomer = () => async (dispatch) => {
       if (response?.data.err === 0) {
           dispatch({
               type: actionTypes.GET_ALL_CUSTOMER,
-              customers: response.data.data
+              customers: response.data.data,
+              count: response.data.count,
           })
       } else {
           dispatch({

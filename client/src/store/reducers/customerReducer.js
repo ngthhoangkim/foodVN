@@ -28,7 +28,7 @@ const customerReducer = (state = initState, action) => {
         msg: action.msg || "",
       };
 
-    case actionTypes.UPDATE_CUSTOMER_FAILED:
+    case actionTypes.UPDATE_CUSTOMER_FAIL:
       return {
         ...state,
         customer: null,

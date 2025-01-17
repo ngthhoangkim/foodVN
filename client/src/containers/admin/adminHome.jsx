@@ -1,7 +1,18 @@
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllCustomer } from "../../store/actions";
 import { DashboardCart } from "../../components";
-import React from "react";
+
 
 const AdminHome = () => {
+    const dispatch = useDispatch();
+    const { count  } = useSelector((state) => state.customer);
+
+    //call api
+    useEffect(() => {
+        dispatch(getAllCustomer());
+    }, [dispatch]);
+
     const cardsData = [
         {
             icon: '💰',
@@ -12,7 +23,7 @@ const AdminHome = () => {
         {
             icon: '👥',
             title: 'Khách hàng',
-            value: '10,000',
+            value: count,
             bgColor: 'bg-green-100',
         },
         {

@@ -61,8 +61,8 @@ const Profile = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
   
-    if (customerInfo.newPassword && customerInfo.newPassword.length < 8) {
-      Swal.fire("Lỗi!", "Mật khẩu mới phải có ít nhất 8 ký tự.", "error");
+    if (customerInfo.newPassword && customerInfo.newPassword.length < 6) {
+      Swal.fire("Lỗi!", "Mật khẩu mới phải có ít nhất 6 ký tự.", "error");
       return;
     }
   
