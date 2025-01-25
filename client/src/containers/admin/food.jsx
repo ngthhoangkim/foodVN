@@ -1,12 +1,10 @@
-import React, { useState } from "react";
-import Swal from "sweetalert2";
-import { useDispatch } from "react-redux";
-import { createCategory } from "../../store/actions";
+import React from "react";
 
-const Food = () => {
+
+const Food = () =>{
     return(
-        <div>food</div>
+        <div>Food</div>
     )
-};
+}  
 
-export default Food;
+export default Food
