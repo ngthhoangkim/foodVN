@@ -56,6 +56,7 @@ export const getAllFoodService = () =>
         err: 0,
         msg: "Lấy danh sách món ăn thành công!",
         data: response,
+        count: response.length
       });
     } catch (error) {
       reject(error);

@@ -1,7 +1,7 @@
 import React from "react";
 import { IoMdClose } from "react-icons/io";
 
-const Popup = ({ isAdd, numberTable, peopleCount, onClose, onEdit, onSubmit }) => {
+const PopupTable = ({ isAdd, numberTable, peopleCount, onClose, onEdit, onSubmit }) => {
     return (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg text-center shadow-lg max-w-sm relative">
@@ -61,4 +61,4 @@ const Popup = ({ isAdd, numberTable, peopleCount, onClose, onEdit, onSubmit }) =
     );
 };
 
-export default Popup;
+export default PopupTable;

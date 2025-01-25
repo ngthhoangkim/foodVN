@@ -13,6 +13,7 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); //đọc được những dữ liệu gửi từ form
+app.use("/uploads", express.static("uploads"));
 
 initRoutes(app);
 connectDB();

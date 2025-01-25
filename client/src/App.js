@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { path } from "./ultils/constant";
 import "./css/App.css";
 import { Home, Login, Menu, ShoppingCart } from "./containers/public";
-import { Admin, AdminHome, ChefStaff, Customer, Food, Order, OrderStaff, Table } from "./containers/admin";
+import { Admin, AdminHome, ChefStaff, Customer, DetailFood, Food, Order, OrderStaff, Table } from "./containers/admin";
 import HomePage from "./containers/public/homePage";
 import Profile from "./containers/public/profile";
 
@@ -28,6 +28,7 @@ function App() {
           <Route path={path.ADMIN_EMPLOYEE} element={<OrderStaff />} />
           <Route path={path.ADMIN_CHEF} element={<ChefStaff />} />
           <Route path={path.ADMIN_TABLE} element={<Table />} />
+          <Route path={path.DETAIL_FOOD} element={<DetailFood />} />
         </Route>
       </Routes>
     </div>

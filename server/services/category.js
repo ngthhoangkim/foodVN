@@ -34,6 +34,7 @@ export const getAllCategoryService = () =>
         err: 0,
         msg: "Lấy danh sách loại thành công!",
         data: response,
+        count: response.length
       });
     } catch (error) {
       reject(error);

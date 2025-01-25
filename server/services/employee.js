@@ -2,13 +2,14 @@ import db from "../models";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 require("dotenv").config();
+const cloudinary = require("../config/cloudinary.config.js");
 
 const hashPassword = (password) => {
   if (!password) throw new Error("Password chưa được truyền vào!");
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 };
 //create employee order
-export const createEmployeeService = ({ name, phone }) =>
+export const createEmployeeService = ({ name, phone, employeeImg, gender }) =>
   new Promise(async (resolve, reject) => {
     try {
       const employeeRole = await db.Role.findOne({
@@ -20,7 +21,9 @@ export const createEmployeeService = ({ name, phone }) =>
           password: hashPassword(process.env.EMPLOYEE_PASSWORD),
           employeeName: name,
           employeePhone: phone,
+          employeeGender: gender,
           roleID: employeeRole.id,
+          employeeImg,
         },
       });
       const token =
@@ -40,7 +43,7 @@ export const createEmployeeService = ({ name, phone }) =>
     }
   });
 //create chef
-export const createChefService = ({ name, phone }) =>
+export const createChefService = ({ name, phone, gender, employeeImg }) =>
   new Promise(async (resolve, reject) => {
     try {
       const chefRole = await db.Role.findOne({
@@ -52,7 +55,9 @@ export const createChefService = ({ name, phone }) =>
           password: hashPassword(process.env.CHEF_PASSWORD),
           employeeName: name,
           employeePhone: phone,
+          employeeGender: gender,
           roleID: chefRole.id,
+          employeeImg,
         },
       });
       const token =
@@ -87,6 +92,7 @@ export const getAllEmployeeService = () =>
       });
       resolve({
         err: 0,
+        count: response.length,
         msg: "Lấy danh sách nhân viên thành công!",
         data: response,
       });
@@ -126,36 +132,37 @@ export const getOneEmployeeService = (id) =>
     }
   });
 //update employee
-export const updateEmployeeService = (id, { name, phone }) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const response = await db.Employee.findOne({
-        where: { id },
-      });
-      if (!response) {
-        resolve({
-          err: 1,
-          msg: "Nhân viên không tồn tại!",
-        });
-      } else {
-        const updatedData = {
-          ...(name && { employeeName: name }),
-          ...(phone && { employeePhone: phone }),
-        };
-
-        await db.Employee.update(updatedData, {
-          where: { id },
-        });
-
-        resolve({
-          err: 0,
-          msg: "Cập nhật nhân viên thành công!",
-        });
-      }
-    } catch (error) {
-      reject(error);
+export const updateEmployeeService = async (
+  id,
+  { name, phone, image, gender }
+) => {
+  try {
+    const employee = await db.Employee.findOne({ where: { id } });
+    if (!employee) {
+      return { err: 1, msg: "Nhân viên không tồn tại!" };
     }
-  });
+    // Cập nhật thông tin nhân viên
+    const updatedData = {
+      ...(name && { employeeName: name }),
+      ...(phone && { employeePhone: phone }),
+      ...(gender && { employeeGender: gender }),
+      ...(image && { employeeImg: image }), 
+    };
+
+    await db.Employee.update(updatedData, { where: { id } });
+
+    return { err: 0, msg: "Cập nhật nhân viên thành công!" };
+  } catch (error) {
+    console.error("Lỗi trong updateEmployeeService:", error);
+    throw error;
+  }
+};
+
+// Hàm trích xuất publicId từ URL của Cloudinary
+const extractPublicId = (url) => {
+  const match = url.match(/upload\/(?:v\d+\/)?(.+)\.[a-z]+$/i);
+  return match ? match[1] : null;
+};
 //delete employee
 export const deleteEmployeeService = (id) =>
   new Promise(async (resolve, reject) => {

@@ -14,4 +14,5 @@ export const path = {
     ADMIN_EMPLOYEE: "employee",
     ADMIN_CHEF: "chef",
     ADMIN_TABLE : "table",
+    DETAIL_FOOD : "detail-food",
 };

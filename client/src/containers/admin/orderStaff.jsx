@@ -1,173 +1,172 @@
-import React, { useState } from "react";
-import Sidebar from "./sidebar";
-
-const OrderStaff = ({ name, role, phone, onUpdate }) => {
-  return (
-    <div className="bg-gray-100 border border-gray-200 rounded-lg shadow-md overflow-hidden">
-      <img
-        src="https://via.placeholder.com/150"
-        alt="Employee"
-        className="w-full h-48 object-cover"
-      />
-      <div className="p-4 bg-yellow-200">
-        <h3 className="text-lg font-semibold text-gray-800">{name}</h3>
-        <p className="text-sm text-gray-600">{role}</p>
-        <p className="text-sm text-gray-600">{phone}</p>
-        <button
-          onClick={() => onUpdate({ name, role, phone })}
-          className="mt-4 px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-500"
-        >
-          Cập nhật
-        </button>
-      </div>
-    </div>
-  );
-};
-
-const UpdatePopup = ({ onClose, onSave, employee }) => {
-  const [name, setName] = useState(employee ? employee.name : "");
-  const [phone, setPhone] = useState(employee ? employee.phone : "");
-  const [role, setRole] = useState(employee ? employee.role : "");
-  const [image, setImage] = useState(null);
-
-  const handleSave = () => {
-    onSave({ name, phone, role, image });
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded shadow-lg w-96">
-        <h2 className="text-xl font-bold text-center text-gray-800 mb-4">
-          {employee ? "Chỉnh sửa thông tin nhân viên" : "Thêm nhân viên order"}
-        </h2>
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Tên"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring focus:border-yellow-300"
-          />
-        </div>
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Số điện thoại"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring focus:border-yellow-300"
-          />
-        </div>
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Chức vụ"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring focus:border-yellow-300"
-          />
-        </div>
-        <div className="mb-4 flex items-center">
-          <input
-            type="file"
-            onChange={(e) => setImage(e.target.files[0])}
-            className="hidden"
-            id="fileInput"
-          />
-          <label
-            htmlFor="fileInput"
-            className="flex items-center justify-between w-full px-4 py-2 border rounded cursor-pointer hover:bg-gray-100"
-          >
-            Ảnh
-            <span className="text-yellow-500">📂</span>
-          </label>
-        </div>
-        <div className="flex justify-end space-x-2">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded"
-          >
-            Hủy
-          </button>
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-500"
-          >
-            {employee ? "Lưu" : "Thêm"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+import React, { useState, useEffect } from "react";
+import { EmployeeCard, PopupEmployee } from "../../components";
+import { MdAddBox } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
+import { createOrderStaff, deleteEmployee, getAllEmployee, updateEmployee } from "../../store/actions";
+import Swal from 'sweetalert2'
 
 const OrderEmployee = () => {
-  const [employees, setEmployees] = useState([
-    { name: "Tên nhân viên", role: "Nhân viên order", phone: "Số điện thoại" },
-    { name: "Tên nhân viên", role: "Nhân viên order", phone: "Số điện thoại" },
-    { name: "Tên nhân viên", role: "Nhân viên order", phone: "Số điện thoại" },
-    { name: "Tên nhân viên", role: "Nhân viên order", phone: "Số điện thoại" },
-  ]);
-  const [showPopup, setShowPopup] = useState(false);
-  const [currentEmployee, setCurrentEmployee] = useState(null);
+  const [isAddPopupVisible, setIsAddPopupVisible] = useState(false);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [newStaff, setNewStaff] = useState({ name: "", phone: "", gender: "", image: null });
 
-  const handleAdd = () => {
-    setCurrentEmployee(null);
-    setShowPopup(true);
-  };
-  const handleUpdate = (employee) => {
-    setCurrentEmployee(employee);
-    setShowPopup(true);
+  const dispatch = useDispatch();
+  const { allStaff } = useSelector((state) => state.employee);
+
+  //get all 
+  useEffect(() => {
+    dispatch(getAllEmployee());
+  }, [dispatch]);
+
+  // popup sửa
+  const openPopup = (employee) => {
+    setSelectedEmployee(employee);
+    setNewStaff({
+      name: employee.employeeName,
+      phone: employee.employeePhone,
+      gender: employee.employeeGender,
+      image: employee.employeeImg,
+    });
+    setIsPopupVisible(true);
   };
 
-  const handleSave = (newData) => {
-    if (currentEmployee) {
-      setEmployees((prevEmployees) =>
-        prevEmployees.map((employee) =>
-          employee.name === currentEmployee.name ? newData : employee
-        )
-      );
-    } else {
-      setEmployees((prevEmployees) => [...prevEmployees, newData]);
-    }
-    console.log("Lưu thông tin nhân viên:", newData);
+  //close
+  const closePopup = () => {
+    setIsPopupVisible(false);
+    setSelectedEmployee(null);
+    setNewStaff({ name: "", phone: "", gender: "", image: null });
+  };
+
+  // popup thêm
+  const openAddPopup = () => {
+    setIsAddPopupVisible(true);
+  };
+  const closeAddPopup = () => {
+    setIsAddPopupVisible(false);
+    setNewStaff({ name: "", phone: "", gender: "", image: null });
+  };
+
+  //nhập dữ liệu
+  const handleInputChange = (e) => {
+    const { name, value, type, files } = e.target;
+    setNewStaff((prevState) => ({
+      ...prevState,
+      [name]: type === "file" ? (files[0] || null) : value,
+    }));
+  };
+  //xử lý chức năng thêm
+  const addOrderStaff = () => {
+    const payload = {
+      name: newStaff.name,
+      phone: newStaff.phone,
+      image: newStaff.image || null,
+      gender: newStaff.gender || "Nam",
+    };
+
+    dispatch(createOrderStaff(payload))
+      .then(() => {
+        Swal.fire("Thành công!", "Thêm nhân viên order thành công", "success");
+        dispatch(getAllEmployee());
+      })
+      .catch((error) => {
+        Swal.fire("Lỗi!", error.message || "Đã xảy ra lỗi trong quá trình thêm", "error");
+        dispatch(getAllEmployee());
+      });
+    closeAddPopup();
+  };
+  //xử lý chức năng xóa
+  const handleDeleteEmployee = (employeeId) => {
+    Swal.fire({
+      title: "Xác nhận",
+      text: "Bạn có chắc muốn xóa nhân viên này không?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Xóa",
+      cancelButtonText: "Hủy",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(deleteEmployee(employeeId))
+          .then(() => {
+            Swal.fire("Thành công!", "Đã xóa nhân viên thành công.", "success");
+            dispatch(getAllEmployee());
+          })
+          .catch((error) => {
+            Swal.fire("Lỗi!", error.message || "Đã xảy ra lỗi trong quá trình xóa", "error");
+          });
+      }
+    });
+  };
+  //xử lý sửa
+  const handleUpdateEmployee = () => {
+    const payload = {
+      id: selectedEmployee.id,
+      name: newStaff.name || selectedEmployee.name,
+      phone: newStaff.phone || selectedEmployee.phone,
+      image: newStaff.image || selectedEmployee.employeeImg,
+      gender: newStaff.gender || selectedEmployee.gender,
+    };
+
+    dispatch(updateEmployee(selectedEmployee.id, payload))
+      .then(() => {
+        Swal.fire("Thành công!", "Cập nhật thông tin nhân viên thành công", "success");
+        dispatch(getAllEmployee());
+      })
+      .catch((error) => {
+        Swal.fire("Lỗi!", error.message || "Đã xảy ra lỗi trong quá trình cập nhật", "error");
+      });
+
+    closePopup();
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      <Sidebar />
-      <main className="flex-1 p-6">
-        <header className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Nhân viên order</h1>
-          <button
-            onClick={handleAdd}
-            className="px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-500"
-          >
-            +
-          </button>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {employees.map((employee, index) => (
-            <OrderStaff
+    <div className="w-full p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl text-primary font-medium">Quản lý nhân viên</h1>
+        <div className="ml-auto text-primary text-3xl hover:opacity-80" onClick={openAddPopup}>
+          <MdAddBox />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {allStaff
+          .filter(employee => employee.role.roleName === "employee")
+          .map((employee, index) => (
+            <EmployeeCard
               key={index}
-              name={employee.name}
-              role={employee.role}
-              phone={employee.phone}
-              onUpdate={handleUpdate}
+              name={employee.employeeName}
+              phone={employee.employeePhone}
+              role="Nhân viên Order"
+              image={employee.employeeImg}
+              gender={employee.employeeGender}
+              onDelete={() => handleDeleteEmployee(employee.id)}
+              onClick={() => openPopup(employee)}
             />
           ))}
-        </div>
-
-        {showPopup && (
-          <UpdatePopup
-            onClose={() => setShowPopup(false)}
-            onSave={handleSave}
-            employee={currentEmployee}
-          />
-        )}
-      </main>
+      </div>
+      {/* popup sửa */}
+      {isPopupVisible && selectedEmployee && (
+        <PopupEmployee
+          isAdd={false}
+          employeeData={newStaff}
+          onClose={closePopup}
+          onSubmit={handleUpdateEmployee}
+          onChange={handleInputChange}
+          role="order"
+        />
+      )}
+      {/* popup thêm */}
+      {isAddPopupVisible && (
+        <PopupEmployee
+          isAdd={true}
+          onClose={closeAddPopup}
+          onSubmit={addOrderStaff}
+          employeeData={newStaff}
+          onChange={handleInputChange}
+          role="order"
+        />
+      )}
     </div>
   );
 };

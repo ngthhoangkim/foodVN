@@ -6,6 +6,9 @@ import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 import { persistReducer } from "redux-persist";
 import customerReducer from "./customerReducer";
 import tableReducer from "./tableReducer";
+import foodReducer from "./foodRducer";
+import categoryReducer from "./categoryReducer";
+import employeeReducer from "./employeeReducer";
 
 const commonConfig = {
     storage,
@@ -22,7 +25,10 @@ const rootReducer = combineReducers({
     auth: persistReducer(authConfig, authReducer),
     user: userReducer,
     customer: customerReducer,
-    table : tableReducer
+    table : tableReducer,
+    food : foodReducer,
+    category : categoryReducer,
+    employee : employeeReducer,
 });
 
 export default rootReducer;
