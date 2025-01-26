@@ -12,7 +12,7 @@ router.get('/all', employeeController.getAllEmployee);
 //get one employee
 router.get('/:id', employeeController.getOneEmployee);
 //delete employee
-router.delete('/:id', employeeController.deleteEmployee);
+router.delete('/:id',upload.single("image"),employeeController.deleteEmployee);
 //update employee
-router.put('/:id', upload.single("image"),employeeController.updateEmployee);
+router.put('/:id',upload.single("image"),employeeController.updateEmployee);
 export default router;

@@ -1,6 +1,6 @@
 import axiosConfig from "../axiosConfig";
 
-//api create order staff
+//api tạo nhân viên order
 export const apiCreateOrderStaff = (payload) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -25,14 +25,25 @@ export const apiCreateOrderStaff = (payload) =>
       reject(error);
     }
   });
-//api createchef
+//api tạo nhân viên bếp
 export const apiCreateChefStaff = (payload) =>
   new Promise(async (resolve, reject) => {
     try {
+      const formData = new FormData();
+      formData.append("name", payload.name);
+      formData.append("phone", payload.phone);
+      formData.append("gender", payload.gender);
+      if (payload.image) {
+        formData.append("image", payload.image);
+      }
+
       const response = await axiosConfig({
         method: "POST",
         url: "/api/employee/chef",
-        data: payload,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       resolve(response);
     } catch (error) {
@@ -75,7 +86,7 @@ export const apiUpdateEmployee = (id, payload) =>
       formData.append("gender", payload.gender || "");
 
       if (payload.image) {
-        formData.append("image", payload.image); // Đính kèm file ảnh
+        formData.append("image", payload.image);
       }
 
       const response = await axiosConfig({

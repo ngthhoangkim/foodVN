@@ -137,7 +137,7 @@ const OrderEmployee = () => {
               key={index}
               name={employee.employeeName}
               phone={employee.employeePhone}
-              role="Nhân viên Order"
+              role="Order"
               image={employee.employeeImg}
               gender={employee.employeeGender}
               onDelete={() => handleDeleteEmployee(employee.id)}

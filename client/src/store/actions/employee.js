@@ -7,7 +7,7 @@ import {
 } from "../../services/employee";
 import actionTypes from "./actionTypes";
 
-//create order staff
+//create nhân viên order
 export const createOrderStaff = (payload) => async (dispatch) => {
   try {
     const response = await apiCreateOrderStaff(payload);
@@ -32,7 +32,7 @@ export const createOrderStaff = (payload) => async (dispatch) => {
     return Promise.reject(new Error("Có lỗi xảy ra khi tạo nhân viên order"));
   }
 };
-//create chef
+//create nhân viên bếp
 export const createChefStaff = (payload) => async (dispatch) => {
   try {
     const response = await apiCreateChefStaff(payload);

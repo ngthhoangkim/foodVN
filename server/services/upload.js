@@ -8,7 +8,7 @@ const storage = new CloudinaryStorage({
   params: {
     folder: "foodvn",
     format: async (req, file) => "png",
-    public_id: (req, file) => file.originalname,
+    public_id: (req, file) => file.originalname.replace(/\s+/g, "_").replace(/\.[^/.]+$/, ""),
   },
 });
 

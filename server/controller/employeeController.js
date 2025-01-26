@@ -1,5 +1,5 @@
 import * as employeeServices from "../services/employee.js";
-import upload from "../services/upload.js";
+const cloudinary = require("../config/cloudinary.config.js");
 
 //create employee
 export const createEmployee = async (req, res) => {
@@ -10,7 +10,7 @@ export const createEmployee = async (req, res) => {
     if (!name || !phone || !gender) {
       return res.status(400).json({ message: "Vui lòng nhập đủ thông tin!" });
     }
-
+    console.log("Ảnh nhân viên order:", employeeImg);
     const response = await employeeServices.createEmployeeService({
       name,
       phone,
@@ -27,14 +27,14 @@ export const createEmployee = async (req, res) => {
 
 //create chef
 export const createChef = async (req, res) => {
-  const { name, phone, gender } = req.body;
-  const employeeImg = req.file ? req.file.path : null;
-
   try {
+    const { name, phone, gender } = req.body;
+    const employeeImg = req.file ? req.file.path : null;
+
     if (!name || !phone || !gender) {
       return res.status(400).json({ message: "Vui lòng nhập đủ thông tin!" });
     }
-
+    console.log("Ảnh nhân viên order:", employeeImg);
     const response = await employeeServices.createChefService({
       name,
       phone,
@@ -44,9 +44,11 @@ export const createChef = async (req, res) => {
 
     return res.status(201).json(response);
   } catch (error) {
-    res.status(500).json({ ["Fail at create employee:"]: error.message });
+    console.error("Error at createEmployee:", error);
+    res.status(500).json({ error: error.message });
   }
 };
+
 //get all employee
 export const getAllEmployee = async (req, res) => {
   try {
@@ -70,15 +72,26 @@ export const getOneEmployee = async (req, res) => {
 export const deleteEmployee = async (req, res) => {
   try {
     const { id } = req.params;
-
     const employee = await employeeServices.getOneEmployeeService(id);
     if (!employee) {
       return res.status(404).json({ message: "Nhân viên không tồn tại!" });
     }
-    //xóa ảnh
-    if (employee.employeeImg) {
-      const publicId = employee.employeeImg.split("/").pop().split(".")[0];
-      await cloudinary.uploader.destroy(`foodvn/${publicId}`);
+    //xóa ảnh trên cloud
+    if (employee.data.employeeImg) {
+      const publicId = getPublicId(employee.data.employeeImg);
+      console.log("Public ID để xóa:", publicId);
+      try {
+        const result = await cloudinary.uploader.destroy(publicId);
+        console.log("Kết quả xóa Cloudinary:", result);
+        if (result.result !== "ok") {
+          return res
+            .status(500)
+            .json({ message: "Lỗi khi xóa ảnh trên Cloudinary!" });
+        }
+      } catch (cloudError) {
+        console.error("Cloudinary error:", cloudError);
+        return res.status(500).json({ message: "Lỗi khi kết nối Cloudinary!" });
+      }
     }
     //xóa nhân viên
     const response = await employeeServices.deleteEmployeeService(id);
@@ -91,6 +104,12 @@ export const deleteEmployee = async (req, res) => {
 export const updateEmployee = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const employee = await employeeServices.getOneEmployeeService(id);
+    if (!employee) {
+      return res.status(404).json({ message: "Nhân viên không tồn tại!" });
+    }
+
     const updatedData = {
       name: req.body.name,
       phone: req.body.phone,
@@ -99,15 +118,43 @@ export const updateEmployee = async (req, res) => {
 
     // Nếu có ảnh, lấy URL từ Cloudinary
     if (req.file) {
-      const imageUrl = req.file.path; 
-      updatedData.image = imageUrl;
+      const oldImage = employee.data.employeeImg;
+
+      if (oldImage) {
+        const publicId = getPublicId(oldImage);
+        try {
+          const result = await cloudinary.uploader.destroy(publicId);
+
+          if (result.result !== "ok") {
+            return res
+              .status(500)
+              .json({ message: "Lỗi khi xóa ảnh cũ trên Cloudinary!" });
+          }
+        } catch (cloudError) {
+          return res
+            .status(500)
+            .json({ message: "Lỗi khi kết nối Cloudinary để xóa ảnh cũ!" });
+        }
+      }
+      // Cập nhật ảnh mới
+      updatedData.image = req.file.path;
     }
 
     // Cập nhật thông tin vào database
-    const result = await employeeServices.updateEmployeeService(id, updatedData);
+    const result = await employeeServices.updateEmployeeService(
+      id,
+      updatedData
+    );
     res.status(200).json({ success: true, data: result });
   } catch (error) {
     console.error("Error in updateEmployee:", error);
     res.status(500).json({ success: false, message: "Update failed" });
   }
+};
+//hàm lấy publicId từ cloudinary
+const getPublicId = (imageUrl) => {
+  const parts = imageUrl.split("/");
+  const filename = parts.pop().split(".").slice(0, -1).join("."); 
+  const folder = parts.pop();
+  return `${folder}/${filename}`;
 };

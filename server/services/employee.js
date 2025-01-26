@@ -106,7 +106,7 @@ export const getOneEmployeeService = (id) =>
     try {
       const response = await db.Employee.findOne({
         where: { id },
-        attributes: ["id", "employeeName", "employeePhone", "roleID"],
+        attributes: ["id", "employeeName", "employeePhone", "roleID", "employeeImg"],
         include: [
           {
             model: db.Role,
@@ -158,11 +158,6 @@ export const updateEmployeeService = async (
   }
 };
 
-// Hàm trích xuất publicId từ URL của Cloudinary
-const extractPublicId = (url) => {
-  const match = url.match(/upload\/(?:v\d+\/)?(.+)\.[a-z]+$/i);
-  return match ? match[1] : null;
-};
 //delete employee
 export const deleteEmployeeService = (id) =>
   new Promise(async (resolve, reject) => {
