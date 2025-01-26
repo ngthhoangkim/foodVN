@@ -102,7 +102,7 @@ export const deleteCategoryService = (id) =>
       resolve({
         err: response ? 0 : 1,
         msg: response
-          ? "Xóa loạiloại thành công!"
+          ? "Xóa loại thành công!"
           : "Dữ liệu không tồn tại!",
       });
     } catch (error) {

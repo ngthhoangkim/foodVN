@@ -4,7 +4,7 @@ import { apiCreateCategory, apiDeleteCategory, apiGetAllCategory, apiUpdateCateg
 //create
 export const createCategory = (payload) => async (dispatch) => {
   try {
-    const response = apiCreateCategory(payload);
+    const response = await apiCreateCategory(payload);
     if (response.data.err === 0) {
       dispatch({
         type: actionTypes.ADD_CATEGORY_SUCCESS,
@@ -80,10 +80,11 @@ export const deleteCategory = (id) => async (dispatch) => {
 export const updateCategory = (id, payload) => async (dispatch) => {
     try {
       const response = await apiUpdateCategory(id, payload);
-      if (response.data.err === 0) {
+      console.log(response.data); 
+      if (response.data.result.err === 0) {
         dispatch({
-          type: actionTypes.UPDATE_CUSTOMER_SUCCES,
-          data: response.data.data,
+          type: actionTypes.UPDATE_CATEGORY_SUCCESS,
+          data: response.data.result,
           msg: response.data.msg || "Cập nhật thông tin loại thành công!",
         });
         dispatch(getAllCategory());

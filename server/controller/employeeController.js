@@ -10,7 +10,6 @@ export const createEmployee = async (req, res) => {
     if (!name || !phone || !gender) {
       return res.status(400).json({ message: "Vui lòng nhập đủ thông tin!" });
     }
-    console.log("Ảnh nhân viên order:", employeeImg);
     const response = await employeeServices.createEmployeeService({
       name,
       phone,
@@ -34,7 +33,6 @@ export const createChef = async (req, res) => {
     if (!name || !phone || !gender) {
       return res.status(400).json({ message: "Vui lòng nhập đủ thông tin!" });
     }
-    console.log("Ảnh nhân viên order:", employeeImg);
     const response = await employeeServices.createChefService({
       name,
       phone,
@@ -79,7 +77,6 @@ export const deleteEmployee = async (req, res) => {
     //xóa ảnh trên cloud
     if (employee.data.employeeImg) {
       const publicId = getPublicId(employee.data.employeeImg);
-      console.log("Public ID để xóa:", publicId);
       try {
         const result = await cloudinary.uploader.destroy(publicId);
         console.log("Kết quả xóa Cloudinary:", result);

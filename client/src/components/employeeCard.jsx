@@ -25,7 +25,7 @@ const employeeCard = ({ name, phone, role, image, gender, onDelete, onClick }) =
             <img
                 src={getImageForRole()}
                 alt="Employee"
-                className="w-full h-auto max-h-64 object-cover"
+                className="w-full h-64 object-cover"
             />
             <div className="p-4 bg-gradientPrimary text-center space-y-3">
                 <h3 className="text-lg font-semibold text-txtCard">

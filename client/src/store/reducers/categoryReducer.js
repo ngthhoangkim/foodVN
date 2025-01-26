@@ -31,7 +31,7 @@ const categoryReducer = (state = initialState, action) => {
     case actionTypes.DELETE_CATEGORY_SUCCESS:
       return {
         ...state,
-        food: state.foods.filter((food) => food.id !== action.id),
+        categories: state.categories.filter((category) => category.id !== action.id),
         msg: action.msg || "Xóa loại thành công!",
       };
     case actionTypes.DELETE_CATEGORY_FAIL:
@@ -48,7 +48,7 @@ const categoryReducer = (state = initialState, action) => {
         ...state,
         categories: state.categories.map((category) =>
           category.id === action.data.id ? { ...category, ...action.data } : category
-        ),
+        ),    
         msg: action.msg || "Cập nhật thông tin loại thành công!",
       };
     case actionTypes.UPDATE_CATEGORY_FAIL:
