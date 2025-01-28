@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 
 
 const Home = () => {
-  const { isLoggedIn } = useSelector(state => state.auth);
   const aboutRef = useRef(null);
   const location = useLocation();
 

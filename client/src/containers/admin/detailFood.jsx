@@ -21,6 +21,7 @@ const DetailFood = () => {
 
   const { categoryName } = useParams();
   const { foods } = useSelector((state) => state.food);
+  const { role } = useSelector(state => state.auth)
 
   //get all food
   const dispatch = useDispatch();
@@ -150,6 +151,7 @@ const DetailFood = () => {
               image={food.foodImg}
               onDelete={() => handleDeleteFood(food.id)}
               onClick={() => openPopup(food)}
+              role={role}
             />
           ))}
       </div>
