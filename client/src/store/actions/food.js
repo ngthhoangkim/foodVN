@@ -4,7 +4,7 @@ import actionTypes from "./actionTypes";
 //create 
 export const createFood = (payload) => async (dispatch) => {
   try {
-    const response = apiCreateFood(payload);
+    const response = await apiCreateFood(payload);
     if (response.data.err === 0) {
       dispatch({
         type: actionTypes.ADD_FOOD_SUCCESS,
@@ -21,9 +21,9 @@ export const createFood = (payload) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: actionTypes.ADD_FOOD_FAIL,
-      data: "Có lỗi xảy ra khi tạo bàn",
+      data: "Có lỗi xảy ra khi tạo món ăn",
     });
-    return Promise.reject(new Error("Có lỗi xảy ra khi tạo bàn"));
+    return Promise.reject(new Error("Có lỗi xảy ra khi tạo món ăn"));
   }
 };
 //get food

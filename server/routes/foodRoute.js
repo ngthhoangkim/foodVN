@@ -1,10 +1,11 @@
 import express from "express";
 import * as foodController from "../controller/foodController";
+import upload from "../services/upload";
 
 const router = express.Router();
 
 // Route tạo món ăn
-router.post("/", foodController.createFoodController);
+router.post("/", upload.single("image"), foodController.createFoodController);
 
 // Route lấy tất cả món ăn
 router.get("/", foodController.getAllFoodController);
@@ -13,9 +14,10 @@ router.get("/", foodController.getAllFoodController);
 router.get("/:id", foodController.getFoodByIdController);
 
 // Route cập nhật món ăn
-router.put("/:id", foodController.updateFoodController);
+router.put("/:id", upload.single("image"), foodController.updateFoodController);
 
 // Route xóa món ăn
-router.delete("/:id", foodController.deleteFoodController);
+router.delete("/:id",upload.single("image"),foodController.deleteFoodController
+);
 
 export default router;

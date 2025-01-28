@@ -4,17 +4,28 @@ import axiosConfig from "../axiosConfig";
 export const apiCreateFood = (payload) =>
   new Promise(async (resolve, reject) => {
     try {
+      const formData = new FormData();
+      formData.append("name", payload.name);
+      formData.append("price", payload.price);
+      formData.append("categoryName", payload.categoryName);
+      formData.append("description", payload.description);
+      if (payload.image) {
+        formData.append("image", payload.image);
+      }
       const response = await axiosConfig({
         method: "POST",
         url: "/api/food",
-        data: payload,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       resolve(response);
     } catch (error) {
       reject(error);
     }
   });
-//get all 
+//get all
 export const apiGetAllFood = () =>
   new Promise(async (resolve, reject) => {
     try {
@@ -33,24 +44,34 @@ export const apiDeleteFood = (id) =>
     try {
       const response = await axiosConfig({
         method: "DELETE",
-        url: `/api/food/${id}`,  
+        url: `/api/food/${id}`,
       });
       resolve(response);
     } catch (error) {
       reject(error);
     }
   });
-//update 
-  export const apiUpdateFood = (id,payload) =>
-    new Promise(async (resolve, reject) => {
-      try {
-        const response = await axiosConfig({
-          method: "PUT",
-          url: `/api/food/${id}`,
-          data: payload,
-        });
-        resolve(response);
-      } catch (error) {
-        reject(error);
+//update
+export const apiUpdateFood = (id, payload) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const formData = new FormData();
+      formData.append("name", payload.name);
+      formData.append("price", payload.price);
+      formData.append("description", payload.description);
+      if (payload.image) {
+        formData.append("image", payload.image);
       }
-    });
+      const response = await axiosConfig({
+        method: "PUT",
+        url: `/api/food/${id}`,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      resolve(response);
+    } catch (error) {
+      reject(error);
+    }
+  });

@@ -1,4 +1,5 @@
 import * as employeeServices from "../services/employee.js";
+import GetPublicId from "./getPublicID.js";
 const cloudinary = require("../config/cloudinary.config.js");
 
 //create employee
@@ -76,10 +77,9 @@ export const deleteEmployee = async (req, res) => {
     }
     //xóa ảnh trên cloud
     if (employee.data.employeeImg) {
-      const publicId = getPublicId(employee.data.employeeImg);
+      const publicId = GetPublicId(employee.data.employeeImg);
       try {
         const result = await cloudinary.uploader.destroy(publicId);
-        console.log("Kết quả xóa Cloudinary:", result);
         if (result.result !== "ok") {
           return res
             .status(500)
@@ -118,7 +118,7 @@ export const updateEmployee = async (req, res) => {
       const oldImage = employee.data.employeeImg;
 
       if (oldImage) {
-        const publicId = getPublicId(oldImage);
+        const publicId = GetPublicId(oldImage);
         try {
           const result = await cloudinary.uploader.destroy(publicId);
 
@@ -147,11 +147,4 @@ export const updateEmployee = async (req, res) => {
     console.error("Error in updateEmployee:", error);
     res.status(500).json({ success: false, message: "Update failed" });
   }
-};
-//hàm lấy publicId từ cloudinary
-const getPublicId = (imageUrl) => {
-  const parts = imageUrl.split("/");
-  const filename = parts.pop().split(".").slice(0, -1).join("."); 
-  const folder = parts.pop();
-  return `${folder}/${filename}`;
 };

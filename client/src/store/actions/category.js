@@ -80,7 +80,6 @@ export const deleteCategory = (id) => async (dispatch) => {
 export const updateCategory = (id, payload) => async (dispatch) => {
     try {
       const response = await apiUpdateCategory(id, payload);
-      console.log(response.data); 
       if (response.data.result.err === 0) {
         dispatch({
           type: actionTypes.UPDATE_CATEGORY_SUCCESS,

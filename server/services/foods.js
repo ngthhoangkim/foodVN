@@ -1,6 +1,6 @@
 import db from "../models";
 // create food
-export const createFoodService = ({ name, categoryName, price, description }) =>
+export const createFoodService = ({ name, categoryName, price, description,foodImg }) =>
   new Promise(async (resolve, reject) => {
     try {
       const category = await db.Category.findOne({
@@ -19,6 +19,7 @@ export const createFoodService = ({ name, categoryName, price, description }) =>
           categoryID: category.id,
           price: price,
           description: description,
+          foodImg: foodImg,
         },
       });
 
@@ -93,7 +94,7 @@ export const getFoodByIdService = (id) =>
     }
   });
 // Update food
-export const updateFoodService = (id, { name, categoryName, price, description }) =>
+export const updateFoodService = (id, { name, categoryName, price, description,image }) =>
   new Promise(async (resolve, reject) => {
     try {
       // Tìm món ăn theo ID
@@ -122,6 +123,7 @@ export const updateFoodService = (id, { name, categoryName, price, description }
         ...(categoryID !== undefined && { categoryID }),
         ...(price && { price }),
         ...(description && { description }),
+        ...(image && { foodImg: image }), 
       };
       // Cập nhật thông tin món ăn
       await food.update(updatedData);

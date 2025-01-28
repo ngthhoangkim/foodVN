@@ -4,12 +4,20 @@ import { useDispatch, useSelector } from "react-redux";
 import Swal from 'sweetalert2'
 import { MdAddBox } from "react-icons/md";
 import { createCategory, deleteCategory, getAllCategory, updateCategory } from "../../store/actions";
+import { useNavigate } from "react-router-dom";
+import { path } from "../../ultils/constant";
 
 const Food = () => {
     const [isAddPopupVisible, setIsAddPopupVisible] = useState(false);
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [newCategory, setNewCategory] = useState({ name: "" });
+
+    //xử lý truyền tên loại vào trang detail food
+    const navigate = useNavigate();
+    const handleCategoryClick = (category) => {
+        navigate(`/admin/${path.DETAIL_FOOD.replace(':categoryName', category.categoryName)}`);
+    };
 
     const dispatch = useDispatch();
     const { categories } = useSelector((state) => state.category);
@@ -24,7 +32,6 @@ const Food = () => {
         setNewCategory({ name: category.categoryName });
         setIsPopupVisible(true);
     };
-
     //close
     const closePopup = () => {
         setIsPopupVisible(false);
@@ -109,6 +116,7 @@ const Food = () => {
                         category={category.categoryName}
                         onDelete={() => handleDeleteCategory(category.id)}
                         onEdit={() => openPopup(category)}
+                        onClick={() => handleCategoryClick(category)}
                     />
                 ))}
             </div>

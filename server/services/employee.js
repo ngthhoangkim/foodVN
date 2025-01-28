@@ -2,7 +2,7 @@ import db from "../models";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 require("dotenv").config();
-const cloudinary = require("../config/cloudinary.config.js");
+
 
 const hashPassword = (password) => {
   if (!password) throw new Error("Password chưa được truyền vào!");
