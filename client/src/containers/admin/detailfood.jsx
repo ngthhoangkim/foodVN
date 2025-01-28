@@ -21,7 +21,6 @@ const DetailFood = () => {
 
   const { categoryName } = useParams();
   const { foods } = useSelector((state) => state.food);
-  const { categories } = useSelector((state) => state.category);
 
   //get all food
   const dispatch = useDispatch();
