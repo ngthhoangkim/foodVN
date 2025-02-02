@@ -58,7 +58,6 @@ export const updateFoodController = async (req, res) => {
     };
     if (req.file) {
       const oldImage = food.data.foodImg;
-
       if (oldImage) {
         const publicId = GetPublicId(oldImage);
         try {
@@ -78,7 +77,7 @@ export const updateFoodController = async (req, res) => {
       updatedData.image = req.file.path;
     }
     const result = await foodService.updateFoodService(id, updatedData);
-    return res.status(201).json(result);
+    return res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ ["Fail at update food:"]: error.message });
   }

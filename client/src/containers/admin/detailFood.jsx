@@ -99,7 +99,6 @@ const DetailFood = () => {
     }
     dispatch(updateFood(selectedFood.id, payload))
       .then((response) => {
-        console.log(response.data);
         Swal.fire("Thành công!", "Cập nhật thông tin thành công", "success");
         dispatch(getAllFood());
       })
