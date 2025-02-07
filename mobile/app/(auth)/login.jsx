@@ -1,45 +1,87 @@
-import { View, Text, TextInput, TouchableOpacity, ImageBackground } from "react-native";
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, TouchableOpacity, ImageBackground, ActivityIndicator, Alert } from "react-native";
 import { useRouter } from "expo-router";
+import { useDispatch, useSelector } from "react-redux";
+import { Feather } from "@expo/vector-icons";
+import * as actions from "../../store/actions";
 import { colors } from "../../constants/colors";
 
 const Login = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const { isLoggedIn, msg } = useSelector((state) => state.auth);
+
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleLogin = () => {
+    setLoading(true);
+    dispatch(actions.login({ phone, password }));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.replace("/table");
+    }
+  }, [isLoggedIn]);
+
+  // Hiển thị Alert khi có lỗi
+  useEffect(() => {
+    if (msg) {
+      Alert.alert("Lỗi đăng nhập", msg, [{ text: "OK" }]);
+    }
+  }, [msg]);
+
   return (
     <ImageBackground
       source={require("../../assets/images/bg-login.png")}
-      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      className="flex-1 justify-center items-center"
       resizeMode="cover"
     >
-      {/* lớp phủ màu đen trong suốt 30% */}
-      <View style={{
-        position: "absolute",
-        top: 0, left: 0, right: 0, bottom: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.3)"
-      }} />
-      <View style={{ width: "80%", padding: 20, backgroundColor: "rgba(255, 255, 255, 0.6)", borderRadius: 20 }}>
-        
-        <Text style={{ fontSize: 20,color: colors.txtCard,textAlign: "center",fontWeight: "bold" ,marginBottom: 20 }}>Đăng nhập</Text>
+      <View className="absolute top-0 left-0 right-0 bottom-0 bg-black/30" />
+
+      <View className="w-4/5 p-5 bg-bgWhite/60 rounded-2xl">
+        <Text className="text-xl text-txtCard text-center font-bold mb-5">
+          Đăng nhập
+        </Text>
 
         <TextInput
           placeholder="Số điện thoại"
-          style={{ backgroundColor: "white", padding: 10, borderRadius: 10, marginBottom: 10 }}
-        />
-        <TextInput
-          placeholder="Mật khẩu"
-          secureTextEntry
-          style={{ backgroundColor: "white", padding: 10, borderRadius: 10, marginBottom: 20 }}
+          value={phone}
+          onChangeText={setPhone}
+          className="bg-white p-3 rounded-lg mb-3"
         />
 
+        <View className="flex-row items-center bg-white rounded-lg mb-5">
+          <TextInput
+            placeholder="Mật khẩu"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+            className="flex-1 p-3"
+          />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)} className="p-3">
+            <Feather name={showPassword ? "eye" : "eye-off"} size={18} color={colors.primary} />
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity
-          onPress={() => router.replace("/table")}
-          style={{ backgroundColor: colors.primary, padding: 12, borderRadius: 10, alignItems: "center" }}
+          onPress={handleLogin}
+          className={`bg-primary p-3 rounded-lg items-center ${loading ? "opacity-50" : ""}`}
+          disabled={loading}
         >
-          <Text style={{ color: "white", fontWeight: "bold" }}>Đăng nhập</Text>
+          {loading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text className="text-white font-bold">Đăng nhập</Text>
+          )}
         </TouchableOpacity>
       </View>
     </ImageBackground>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
