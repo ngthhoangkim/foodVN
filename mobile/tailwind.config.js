@@ -16,7 +16,7 @@ module.exports = {
         greenDark : "#16C47F",
         yellowDark : "#FFD65A",
         bgWhite : "#F6F8FA",
-        grey : "#EEEEEE"
+        greyDark : "#adb5bd"
       },
       backgroundImage: {
         gradientPrimary: "linear-gradient(to bottom right, #FFB330, #FFFCDE)",

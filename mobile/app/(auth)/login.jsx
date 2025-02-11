@@ -9,7 +9,7 @@ import { colors } from "../../constants/colors";
 const Login = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { isLoggedIn, msg } = useSelector((state) => state.auth);
+  const { isLoggedIn, msg,role } = useSelector((state) => state.auth);
 
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -24,9 +24,13 @@ const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.replace("/table");
+      if(role === 'employee' || role === 'chef' || role === 'admin'){
+        router.replace("/table");
+      } else{
+        Alert.alert("Lỗi đăng nhập", "Tài khoản không có quyền truy cập!", [{ text: "OK" }]);
+      }
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn,role]);
 
   // Hiển thị Alert khi có lỗi
   useEffect(() => {

@@ -9,8 +9,8 @@ const TabsLayout = () => {
     <>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: colors.primary,  // Màu khi tab được chọn
-          tabBarInactiveTintColor: colors.greyDark, // Màu khi tab không được chọn
+          tabBarActiveTintColor: colors.primary,  
+          tabBarInactiveTintColor: colors.greyDark, 
         }}
       >
         <Tabs.Screen
