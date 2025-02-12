@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 import authReducer from "./authReducer";
 import tableReducer from "./tableReducer";
+import employeeReducer from "./employeeReducer";
 
 
 const commonConfig = {
@@ -19,7 +20,8 @@ const authConfig = {
 
 const rootReducer = combineReducers({
   auth: persistReducer(authConfig,authReducer),
-  table: tableReducer
+  table: tableReducer,
+  employee : employeeReducer,
 });
 
 export default rootReducer;

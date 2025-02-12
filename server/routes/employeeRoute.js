@@ -1,6 +1,6 @@
 import express from 'express';
 import * as employeeController from '../controller/employeeController.js';
-import upload from '../services/upload.js';
+import upload from '../services/upload';
 
 const router = express.Router();
 //create employee order

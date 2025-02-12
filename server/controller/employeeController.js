@@ -4,10 +4,10 @@ const cloudinary = require("../config/cloudinary.config.js");
 
 //create employee
 export const createEmployee = async (req, res) => {
-  try {
-    const { name, phone, gender } = req.body;
-    const employeeImg = req.file ? req.file.path : null;
+  const { name, phone, gender } = req.body;
+  const employeeImg = req.file ? req.file.path : null;
 
+  try {
     if (!name || !phone || !gender) {
       return res.status(400).json({ message: "Vui lòng nhập đủ thông tin!" });
     }
@@ -101,19 +101,20 @@ export const deleteEmployee = async (req, res) => {
 export const updateEmployee = async (req, res) => {
   try {
     const { id } = req.params;
-
     const employee = await employeeServices.getOneEmployeeService(id);
+
     if (!employee) {
       return res.status(404).json({ message: "Nhân viên không tồn tại!" });
     }
 
+    // Cập nhật thông tin cơ bản
     const updatedData = {
       name: req.body.name,
       phone: req.body.phone,
       gender: req.body.gender,
     };
 
-    // Nếu có ảnh, lấy URL từ Cloudinary
+    // Nếu có ảnh mới, thực hiện xóa ảnh cũ và cập nhật ảnh mới
     if (req.file) {
       const oldImage = employee.data.employeeImg;
 

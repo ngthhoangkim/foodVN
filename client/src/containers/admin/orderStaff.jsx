@@ -60,7 +60,7 @@ const OrderEmployee = () => {
       name: newStaff.name,
       phone: newStaff.phone,
       image: newStaff.image || null,
-      gender: newStaff.gender || "Nam",
+      gender: newStaff.gender || "Chưa có",
     };
 
     dispatch(createOrderStaff(payload))
