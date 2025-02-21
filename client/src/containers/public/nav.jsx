@@ -33,7 +33,7 @@ const Nav = () => {
       <ul className="flex-grow flex justify-center space-x-20 ml-24">
         <li><Link className="text-xl text-accent hover:text-accent2" to={'/'}>Trang chủ</Link></li>
         <li><a className="text-xl text-accent hover:text-accent2" href="/#about">Giới thiệu</a></li>
-        <li><Link className="text-xl text-accent hover:text-accent22" to={path.MENU}>Thực đơn</Link></li>
+        <li><Link className="text-xl text-accent hover:text-accent22" to={`/${path.MENU}`}>Thực đơn</Link></li>
       </ul>
       <div className="flex space-x-3 md:space-x-0 rtl:space-x-reverse gap-8">
         {/* Hiển thị icon giỏ hàng và người dùng khi đã đăng nhập */}

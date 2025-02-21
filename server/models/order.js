@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       customerID: DataTypes.INTEGER,
       tableID: DataTypes.INTEGER,
       status: DataTypes.STRING,
+      total: DataTypes.DECIMAL(10, 2),
     },
     {
       sequelize,

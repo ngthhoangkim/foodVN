@@ -13,4 +13,5 @@ router.get('/:id', tableController.getOneTableController);
 router.put('/:id', tableController.updateTableController);
 //delete table
 router.delete('/:id', tableController.deleteTableController);
+
 export default router;
