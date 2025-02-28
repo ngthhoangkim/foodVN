@@ -67,13 +67,13 @@ export const loginService = async ({ phone, password }) => {
 
     // Nếu vẫn không tìm thấy, trả lỗi
     if (!response) {
-      return { err: 1, msg: "Tài khoản không tồn tại!" };
+      return { err: 1, msg: "Số điện thoại bạn nhập không tồn tại. Hãy nhập lại!" };
     }
 
     // Kiểm tra mật khẩu
     const isCorrectPassword = bcrypt.compareSync(password, response.password);
     if (!isCorrectPassword) {
-      return { err: 2, msg: "Mật khẩu sai!" };
+      return { err: 2, msg: "Bạn nhập sai mật khẩu. Hãy nhập lại nhé!" };
     }
 
     // Tạo token

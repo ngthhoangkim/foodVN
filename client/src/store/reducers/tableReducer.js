@@ -4,6 +4,7 @@ const initialState = {
   tables: [],
   msg: null,
   count: 0,
+  halls: [],
 };
 
 const tableReducer = (state = initialState, action) => {
@@ -52,6 +53,47 @@ const tableReducer = (state = initialState, action) => {
         msg: action.msg || "Cập nhật thông tin bàn thành công!",
       };
     case actionTypes.UPDATE_TABLE_FAIL:
+      return {
+        ...state,
+        msg: action.msg,
+      };
+    case actionTypes.GET_ALL_HALL:
+      return {
+        ...state,
+        halls: action.data || [],
+        msg: action.msg || "",
+      };
+    case actionTypes.ADD_HALL_SUCCESS:
+      return {
+        ...state,
+        halls: [...state.halls, action.data],
+        msg: action.msg || "Thêm sảnh thành công!",
+      };
+    case actionTypes.ADD_HALL_FAIL:
+      return {
+        ...state,
+        msg: action.msg || "Thêm sảnh thất bại!",
+      };
+    case actionTypes.DELETE_HALL_SUCCESS:
+      return {
+        ...state,
+        halls: state.halls.filter((hall) => hall.id !== action.id),
+        msg: action.msg || "Xóa sảnh thành công!",
+      };
+    case actionTypes.DELETE_HALL_FAIL:
+      return {
+        ...state,
+        msg: action.msg || "Xóa sảnh thất bại!",
+      };
+    case actionTypes.UPDATE_HALL_SUCCESS:
+      return {
+        ...state,
+        halls: state.halls.map((hall) =>
+          hall.id === action.data.id ? { ...hall, ...action.data } : hall
+        ),
+        msg: action.msg || "Cập nhật thông tin sảnh thành công!",
+      };
+    case actionTypes.UPDATE_HALL_FAIL:
       return {
         ...state,
         msg: action.msg,

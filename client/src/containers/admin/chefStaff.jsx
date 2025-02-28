@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MdAddBox } from "react-icons/md";
 import { EmployeeCard, PopupEmployee } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
-import { createChefStaff, deleteEmployee, getAllEmployee, updateEmployee } from "../../store/actions";
+import * as action from "../../store/actions";
 import Swal from 'sweetalert2'
 
 
@@ -16,7 +16,7 @@ const ChefEmployee = () => {
 
   //get all 
   useEffect(() => {
-    dispatch(getAllEmployee());
+    dispatch(action.getAllEmployee());
   }, [dispatch]);
 
   // popup sửa
@@ -64,14 +64,14 @@ const ChefEmployee = () => {
       gender: newStaff.gender || "Nam",
     };
 
-    dispatch(createChefStaff(payload))
+    dispatch(action.createChefStaff(payload))
       .then(() => {
         Swal.fire("Thành công!", "Thêm nhân viên bếp thành công", "success");
-        dispatch(getAllEmployee());
+        dispatch(action.getAllEmployee());
       })
       .catch((error) => {
         Swal.fire("Lỗi!", error.message || "Đã xảy ra lỗi trong quá trình thêm", "error");
-        dispatch(getAllEmployee());
+        dispatch(action.getAllEmployee());
       });
     closeAddPopup();
   };
@@ -88,10 +88,10 @@ const ChefEmployee = () => {
       cancelButtonText: "Hủy",
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch(deleteEmployee(employeeId))
+        dispatch(action.deleteEmployee(employeeId))
           .then(() => {
             Swal.fire("Thành công!", "Đã xóa nhân viên thành công.", "success");
-            dispatch(getAllEmployee());
+            dispatch(action.getAllEmployee());
           })
           .catch((error) => {
             Swal.fire("Lỗi!", error.message || "Đã xảy ra lỗi trong quá trình xóa", "error");
@@ -109,10 +109,10 @@ const ChefEmployee = () => {
       gender: newStaff.gender || selectedEmployee.gender,
     };
 
-    dispatch(updateEmployee(selectedEmployee.id, payload))
+    dispatch(action.updateEmployee(selectedEmployee.id, payload))
       .then(() => {
         Swal.fire("Thành công!", "Cập nhật thông tin nhân viên thành công", "success");
-        dispatch(getAllEmployee());
+        dispatch(action.getAllEmployee());
       })
       .catch((error) => {
         Swal.fire("Lỗi!", error.message || "Đã xảy ra lỗi trong quá trình cập nhật", "error");

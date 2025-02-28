@@ -7,6 +7,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "tableID", 
         as: "table",
       });
+
+      Table.belongsTo(models.Hall, {
+        foreignKey: "hallID",
+        as: "hall",
+      });
     }
   }
   Table.init(
@@ -14,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       tableNumber: DataTypes.INTEGER,
       maxQuantity: DataTypes.INTEGER,
       status: DataTypes.STRING,
+      hallID: DataTypes.INTEGER,
     },
     {
       sequelize,

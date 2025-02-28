@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { MdOutlineDelete } from "react-icons/md";
 import { Search } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllCustomer } from "../../store/actions";
+import * as action from "../../store/actions";
 
 const Customer = () => {
     const { customers } = useSelector((state) => state.customer);
@@ -10,7 +10,7 @@ const Customer = () => {
 
     //call api get all
     useEffect(() => {
-        dispatch(getAllCustomer());
+        dispatch(action.getAllCustomer());
     }, [dispatch]);
 
     return (

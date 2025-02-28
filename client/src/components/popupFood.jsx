@@ -20,46 +20,77 @@ const PopupFood = ({ isAdd, category, name, price, description, onClose, onSubmi
 
                 {/* Form */}
                 <form onSubmit={onSubmit} className="space-y-4">
+                    {/* Tên món ăn */}
+                    <div>
+                        <label htmlFor="foodName" className="block font-medium text-gray-700 mb-1">
+                            Tên món ăn
+                        </label>
+                        <input
+                            id="foodName"
+                            type="text"
+                            name="name"
+                            value={name}
+                            onChange={onChange}
+                            placeholder="Nhập tên món ăn"
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-primary/50"
+                        />
+                    </div>
 
+                    {/* Giá */}
+                    <div>
+                        <label htmlFor="foodPrice" className="block font-medium text-gray-700 mb-1">
+                            Giá (VNĐ)
+                        </label>
+                        <input
+                            id="foodPrice"
+                            type="number"
+                            name="price"
+                            value={price}
+                            onChange={(e) => {
+                                if (e.target.value >= 0) {
+                                    onChange(e);
+                                }
+                            }}
+                            placeholder="Nhập giá món ăn"
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-primary/50"
+                        />
+                    </div>
 
-                    {/* Input */}
-                    <input
-                        type="text"
-                        name="name"
-                        value={name}
-                        onChange={onChange}
-                        placeholder="Tên món ăn"
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-primary/50"
-                    />
+                    {/* Mô tả */}
+                    <div>
+                        <label htmlFor="foodDescription" className="block font-medium text-gray-700 mb-1">
+                            Mô tả
+                        </label>
+                        <input
+                            id="foodDescription"
+                            type="text"
+                            name="description"
+                            value={description}
+                            onChange={onChange}
+                            placeholder="Nhập mô tả"
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-primary/50"
+                        />
+                    </div>
 
-                    <input
-                        type="number"
-                        name="price"
-                        value={price}
-                        onChange={onChange}
-                        placeholder="Giá"
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-primary/50"
-                    />
+                    {/* Hình ảnh */}
+                    <div>
+                        <label htmlFor="foodImage" className="block font-medium text-gray-700 mb-1">
+                            Hình ảnh
+                        </label>
+                        <input
+                            id="foodImage"
+                            type="file"
+                            name="image"
+                            accept="image/*"
+                            onChange={onImageChange}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-primary/50"
+                        />
+                    </div>
 
-                    <input
-                        type="text"
-                        name="description"
-                        value={description}
-                        onChange={onChange}
-                        placeholder="Mô tả"
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-primary/50"
-                    />
-
-                    <input
-                        type="file"
-                        name="image"
-                        accept="image/*"
-                        onChange={onImageChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-primary/50"
-                    />
+                    {/* Nút xác nhận */}
                     <button
                         type="submit"
                         className="w-full px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition"

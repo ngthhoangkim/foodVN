@@ -21,15 +21,21 @@ const PopupCategory = ({ isAdd, category, onClose, onSubmit, onChange }) => {
                 {/* Form */}
                 <form onSubmit={onSubmit} className="space-y-4">
                     {/* Input */}
-                    <input
-                        type="text"
-                        name="name"
-                        value={category} 
-                        onChange={onChange}
-                        placeholder="Tên loại"
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-primary/50"
-                    />
+                    <div>
+                        <label htmlFor="categoryName" className="block font-medium text-gray-700 mb-1">
+                            Tên loại
+                        </label>
+                        <input
+                            id="categoryName"
+                            type="text"
+                            name="name"
+                            value={category}
+                            onChange={onChange}
+                            placeholder="Nhập tên loại"
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-primary/50"
+                        />
+                    </div>
 
                     {/* Nút xác nhận */}
                     <button

@@ -44,7 +44,7 @@ const Login = () => {
     }, [isLoggedIn, role, navigate]);
 
     useEffect(() => {
-        msg && Swal.fire('Lỗi!', msg, 'error')
+        msg && Swal.fire('Thông báo!', msg, 'warning')
     }, [msg, update])
 
     //xử lý sumit
