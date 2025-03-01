@@ -6,7 +6,7 @@ import { PopupHall, PopupTable, TableCard } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 
 import Swal from 'sweetalert2'
-import { createHall, createTable, deleteHall, deleteTable, getAllHall, getAllTable, updateHall } from "../../store/actions";
+import { createHall, createTable, deleteHall, deleteTable, getAllHall, getAllTable, updateHall, updateTable } from "../../store/actions";
 
 const Table = () => {
     const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -69,12 +69,11 @@ const Table = () => {
 
     // Edit table
     const handleUpdateTable = (updatedTableNumber, updatedPeopleCount) => {
-        const updatedTable = {
-            id: selectedTable.id,
+        const payload = {
             tableNumber: updatedTableNumber,
             maxQuantity: updatedPeopleCount,
         };
-        dispatch(updatedTable(updatedTable.id, updatedTable))
+        dispatch(updateTable(selectedTable.id, payload))
             .then(() => {
                 Swal.fire("Thành công!", "Cập nhật bàn thành công", "success");
             })

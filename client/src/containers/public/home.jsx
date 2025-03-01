@@ -1,8 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import Nav from '../public/nav';
 import { Outlet, useLocation } from "react-router-dom";
-import { useSelector } from 'react-redux';
-
 
 const Home = () => {
   const aboutRef = useRef(null);

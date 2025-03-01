@@ -13,3 +13,16 @@ export const apiGetAllTable = () =>
       reject(error);
     }
   });
+//get all hall
+export const apiGetAllHall = () =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axiosConfig({
+        method: "GET",
+        url: "/api/table/hall",
+      });
+      resolve(response);
+    } catch (error) {
+      reject(error);
+    }
+  });

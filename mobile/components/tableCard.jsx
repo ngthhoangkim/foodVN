@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 
 const TableCard = ({ table }) => {
-    let bgColor = "bg-gray-400"; // Màu mặc định
+    let bgColor = "bg-gray-400";
 
     if (table.status === "Trống") {
         bgColor = "bg-green-500";
@@ -13,9 +13,9 @@ const TableCard = ({ table }) => {
     }
 
     return (
-        <View className={`w-36 h-36 justify-center items-center rounded-lg shadow-lg ${bgColor} m-2`}>
-            <Text className="text-white font-bold text-lg">Bàn {table.tableNumber}</Text>
-            <Text className="text-white text-base">Số lượng: {table.maxQuantity}</Text>
+        <View className={`w-24 h-24 justify-center items-center rounded-xl shadow-md ${bgColor} m-2`}>
+            <Text className="text-white font-bold text-base">Bàn {table.tableNumber}</Text>
+            <Text className="text-white text-xs">Số lượng: {table.maxQuantity}</Text>
         </View>
     );
 };

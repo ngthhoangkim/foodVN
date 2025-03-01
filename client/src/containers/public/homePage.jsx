@@ -41,12 +41,14 @@ const HomePage = () => {
             Thưởng thức hương vị Việt đậm đà trong không gian ấm cúng tại nhà
             hàng của chúng tôi.
           </h1>
-          <button
-            className="bg-accent opacity-80 text-white py-3 px-10 rounded-full font-semibold text-lg hover:bg-accent2 mt-5"
+          <motion.button
+            className="relative overflow-hidden border-2 border-primary text-primary py-3 px-10 rounded-full font-semibold text-lg transition-all duration-300 group"
             onClick={handleGoToMenu}
           >
-            Gọi món ngay
-          </button>
+            <span className="relative z-10 group-hover:text-txtCard">Gọi món ngay</span>
+            <span className="absolute inset-0 bg-gradientPrimary scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
+          </motion.button>
+
         </div>
       </div>
       {/* about */}

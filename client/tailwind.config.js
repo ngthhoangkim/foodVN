@@ -5,7 +5,7 @@ module.exports = {
     extend: {
       colors: {
         primary: "#f2af29",
-        secondary: "#474747",
+        secondary: "#eae151",
         background: "#e0e0ce",
         text: "#000000",
         txtCard: "#1F384C",
@@ -16,7 +16,7 @@ module.exports = {
         greenDark: "#16C47F",
         yellowDark: "#FFD65A",
         bgWhite: "#F6F8FA",
-        grey: "#EEEEEE",
+        grayDark: "#edede9",
       },
       backgroundImage: {
         gradientPrimary: "linear-gradient(to bottom right, #FFB330, #FFFCDE)",

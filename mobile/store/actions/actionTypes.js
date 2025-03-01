@@ -6,6 +6,7 @@ const actionTypes= {
 
     GET_ALL_TABLE : 'GET_ALL_TABLE',
     GET_ONE_EMPLOYEE: 'GET_ONE_EMPLOY',
+    GET_ALL_HALL : 'GET_ALL_HALL',
 }
 
 export default actionTypes

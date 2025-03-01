@@ -11,4 +11,4 @@ export { default as PopupCategory} from './popupCategory.jsx'
 export { default as FoodCard} from './foodCard.jsx'
 export { default as PopupFood} from './popupFood.jsx' 
 export { default as PopupHall} from './popupHall.jsx'
-
+export { default as MenuCard} from './menuCard.jsx'
