@@ -1,4 +1,4 @@
-import { apiCreateFood, apiDeleteFood, apiGetAllFood, apiUpdateFood } from "../../services/food";
+import { apiCreateFood, apiDeleteFood, apiGetAllFood, apiGetOneFood, apiUpdateFood } from "../../services/food";
 import actionTypes from "./actionTypes";
 
 //create 
@@ -106,4 +106,28 @@ export const updateFood = (id, payload) => async (dispatch) => {
       );
     }
   };
-  
+//get one
+export const getOneFood = (foodID) => async (dispatch) => {
+  try {
+    const response = await apiGetOneFood(foodID);
+    if (response?.data.err === 0) {
+      dispatch({
+        type: actionTypes.GET_ONE_FOOD,
+        food: response.data.data, 
+        msg: response.data.msg, 
+      });
+    } else {
+      dispatch({
+        type: actionTypes.GET_ONE_FOOD,
+        food: null,
+        msg: response.data.msg,
+      });
+    }
+  } catch (error) {
+    dispatch({
+      type: actionTypes.GET_ONE_FOOD,
+      food: null,
+      msg: "Có lỗi xảy ra khi lấy thông tin món ăn!",
+    });
+  }
+};

@@ -2,10 +2,9 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { path } from "./ultils/constant";
 import "./css/App.css";
-import { Home, Login, Menu, ShoppingCart } from "./containers/public";
+import { FoodDetail, Home, HomePage, Login, Menu, Profile, ShoppingCart } from "./containers/public";
 import { Admin, AdminHome, ChefStaff, Customer, DetailFood, Food, Order, OrderStaff, Table } from "./containers/admin";
-import HomePage from "./containers/public/homePage";
-import Profile from "./containers/public/profile";
+
 
 function App() {
   return (
@@ -18,6 +17,7 @@ function App() {
           <Route path={path.SHOPPING_CART} element={<ShoppingCart />} />
           <Route path={path.PROFILE} element={<Profile />} />
           <Route path={path.MENU} element={<Menu />} />
+          <Route path={path.DETAIL} element={<FoodDetail />} />
         </Route>
         {/* các trang dành cho admin */}
         <Route path={path.ADMIN} element={<Admin />}>

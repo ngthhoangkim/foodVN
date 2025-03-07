@@ -4,6 +4,7 @@ const initialState = {
   foods: [],
   msg: null,
   count: 0,
+  food: null,
 };
 
 const foodReducer = (state = initialState, action) => {
@@ -55,6 +56,12 @@ const foodReducer = (state = initialState, action) => {
       return {
         ...state,
         msg: action.msg,
+      };
+    case actionTypes.GET_ONE_FOOD:
+      return {
+        ...state,
+        food: action.food || null,
+        msg: action.msg || "",
       };
     default:
       return state;

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {  MenuCard, Search } from "../../components";
+import { MenuCard, Search } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCategory, getAllFood } from "../../store/actions";
 
 const Menu = () => {
   const { categories } = useSelector((state) => state.category);
-  const { role } = useSelector((state) => state.auth);
   const { foods } = useSelector((state) => state.food);
+  const { role, id } = useSelector((state) => state.auth);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -14,7 +15,9 @@ const Menu = () => {
     dispatch(getAllFood());
   }, [dispatch]);
 
-  const categoryList = [{ id: "all", categoryName: "Tất cả" }, ...categories];
+  const validCategories = categories.filter(cat => cat.categoryName);
+  const categoryList = [{ id: "all", categoryName: "Tất cả" }, ...validCategories];
+
   const [selectedCategories, setSelectedCategories] = useState(["Tất cả"]);
 
   // Xử lý chọn danh mục
@@ -38,15 +41,16 @@ const Menu = () => {
     ? foods
     : foods.filter((food) => selectedCategories.includes(food.category.categoryName));
 
+
   return (
     <div className="w-full p-6 mt-28 flex gap-6">
       {/* Sidebar chọn danh mục */}
       <div className="w-1/4 bg-grayDark p-4 rounded-lg flex flex-col items-center">
         <label className="block mb-4  text-xl font-bold text-center">Chọn danh mục:</label>
         <div className="grid grid-cols-2 gap-3 w-full">
-          {categoryList.map((category) => (
+          {categoryList.map((category, index) => (
             <label
-              key={category.id}
+              key={`${category.id}-${index}`}
               className="flex items-center gap-2 cursor-pointer p-2 bg-white rounded-md shadow-md hover:bg-gray-100"
             >
               <input
@@ -67,20 +71,15 @@ const Menu = () => {
           <Search placeholder="Tìm kiếm món ăn" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredFoods.length > 0 ? (
-            filteredFoods.map((food) => (
-              <MenuCard
-                key={food.id}
-                name={food.name}
-                price={food.price}
-                image={food.foodImg}
-                onAddToCart={() => console.log("Thêm vào giỏ", food.id)}
-                onClick={() => console.log("Xem chi tiết", food.id)}
-              />
-            ))
-          ) : (
-            <p className="col-span-full text-center text-gray-500">Không có món ăn nào.</p>
-          )}
+          {filteredFoods.map((food, index) => (
+            <MenuCard
+              key={`${food.id}-${index}`}
+              foodID={food.id}
+              name={food.name}
+              price={food.price}
+              image={food.foodImg}
+            />
+          ))}
         </div>
       </div>
     </div>

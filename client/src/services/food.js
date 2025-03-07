@@ -75,3 +75,16 @@ export const apiUpdateFood = (id, payload) =>
       reject(error);
     }
   });
+//get one
+export const apiGetOneFood = (id) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axiosConfig({
+        method: "get",
+        url: `/api/food/${id}`,
+      });
+      resolve(response);
+    } catch (error) {
+      reject(error);
+    }
+  });

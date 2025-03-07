@@ -1,90 +1,108 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CiShoppingCart } from "react-icons/ci";
 import { IoAdd, IoRemove } from "react-icons/io5";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { addCart, deleteCart, updateCart, getCart } from "../store/actions";
+import Swal from "sweetalert2";
 
-const MenuCard = ({ name, price, image, onClick, onAddToCart, onRemoveFromCart }) => {
-    const [quantity, setQuantity] = useState(0);
-    const [isEditing, setIsEditing] = useState(false);
-
-    // Định dạng tiền tệ
-    const formattedPrice = Number(price).toLocaleString("vi-VN") + " VND";
-
-    // Xử lý khi nhấn vào giỏ hàng lần đầu
-    const handleAddToCart = (e) => {
-        e.stopPropagation();
-        if (quantity === 0) {
-            setQuantity(1);
-            setIsEditing(true);
-            onAddToCart && onAddToCart();
+const MenuCard = ({ foodID, name, price, image }) => {
+    const dispatch = useDispatch();
+    const { id } = useSelector((state) => state.auth);
+    const cartItems = useSelector((state) => Array.isArray(state.cart?.cartItems) ? state.cart.cartItems : []);
+    useEffect(() => {
+        if (id) {
+            dispatch(getCart(id));
         }
-    };
+    }, [dispatch, id]);
 
-    // Tăng số lượng
-    const increaseQuantity = (e) => {
-        e.stopPropagation();
-        setQuantity(prev => prev + 1);
-    };
+    // Lấy số lượng từ giỏ hàng nếu món ăn đã có
+    const cartItem = Array.isArray(cartItems) ? cartItems.find(item => item.foodID === foodID) : null;
+    const [quantity, setQuantity] = useState(cartItem ? cartItem.quantity : 0);
+    const [isEditing, setIsEditing] = useState(cartItem ? true : false);
 
-    // Giảm số lượng
-    const decreaseQuantity = (e) => {
-        e.stopPropagation();
-        if (quantity > 1) {
-            setQuantity(prev => prev - 1);
+
+    useEffect(() => {
+        const updatedCartItem = cartItems.find(item => item.foodID === foodID);
+
+        if (updatedCartItem) {
+            setQuantity(updatedCartItem.quantity);
+            setIsEditing(true);
         } else {
             setQuantity(0);
             setIsEditing(false);
-            onRemoveFromCart && onRemoveFromCart();
         }
+    }, [cartItems, foodID]);
+
+    const handleAddToCart = () => {
+        if (!id) {
+            Swal.fire("Thông báo", "Bạn cần đăng nhập để thêm vào giỏ hàng!", "warning");
+            return;
+        }
+        const newItem = { foodID, customerID: id, quantity: 1 };
+
+        dispatch(addCart(newItem));
+        setIsEditing(true);
     };
 
-    // Cập nhật số lượng từ input
-    const handleInputChange = (e) => {
-        let value = parseInt(e.target.value, 10);
-        if (isNaN(value) || value < 1) {
-            value = 1;
+    const increaseQuantity = () => {
+        const newQuantity = quantity + 1;
+        setQuantity(newQuantity);
+        dispatch(updateCart({ foodID, customerID: id, quantity: newQuantity }));
+    };
+
+    const decreaseQuantity = () => {
+        if (quantity > 1) {
+            const newQuantity = quantity - 1;
+            setQuantity(newQuantity);
+            dispatch(updateCart({ foodID, customerID: id, quantity: newQuantity }));
+        } else {
+            setIsEditing(false);
+            setQuantity(0);
+            dispatch(deleteCart(id, foodID));
         }
-        setQuantity(value);
     };
 
     return (
-        <div
-            className="w-full max-w-xs bg-gradientPrimary shadow-lg rounded-xl overflow-hidden cursor-pointer flex flex-col justify-between"
-            onClick={onClick}
-        >
-            <img
-                src={image}
-                alt={name}
-                className="w-full h-60 object-cover"
-            />
+        <div className="w-full max-w-xs bg-gradientPrimary shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
+            <img src={image} alt={name} className="w-full h-60 object-cover" />
 
-            <div className="p-4 text-center flex flex-col justify-between min-h-[180px]">
+            <div className="p-4 text-center flex flex-col justify-between min-h-[200px]">
                 <div>
                     <h3 className="text-2xl font-semibold text-txtCard">{name}</h3>
-                    <p className="text-xl text-txtCard">{formattedPrice}</p>
+                    <p className="text-xl text-txtCard mt-2 mb-2">
+                        {Number(price).toLocaleString("vi-VN")} VND
+                    </p>
                 </div>
 
-                {/* Nút giỏ hàng / Input số lượng */}
-                <div className="mt-auto flex justify-center">
-                    {isEditing ? (
-                        <div className="flex items-center gap-2 bg-primary shadow-md px-3 py-1 rounded-lg">
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <Link
+                        to={`/detail/${foodID}`}
+                        className="relative overflow-hidden border-2 border-primary text-txtCard py-1 px-3 rounded-md font-medium text-sm transition-all duration-300 group"
+                    >
+                        <span className="relative text-lg z-10">Chi tiết</span>
+                        <span className="absolute inset-0 bg-primary scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
+                    </Link>
+                </motion.div>
+
+                <div className="mt-3 flex justify-center">
+                    {isEditing && quantity > 0 ? (
+                        <div className="flex items-center gap-4 mt-3">
                             <button
-                                className="p-1 bg-grayDark rounded-full hover:bg-gray-300 transition"
+                                className="p-1 bg-grayDark rounded-full hover:bg-primary text-txtCard transition"
                                 onClick={decreaseQuantity}
                             >
-                                <IoRemove size={16} />
+                                <IoRemove size={20} />
                             </button>
-                            <input
-                                type="number"
-                                value={quantity}
-                                onChange={handleInputChange}
-                                className="w-10 h-8 text-center border rounded-lg text-base font-semibold bg-white"
-                                min="1"    
-                            />
+                            <span className="w-10 h-8 text-center border rounded-lg text-base font-semibold bg-white flex items-center justify-center">
+                                {quantity}
+                            </span>
                             <button
-                                className="p-1 bg-grayDark rounded-full hover:bg-gray-300 transition"
+                                className="p-1 bg-grayDark rounded-full hover:bg-primary text-txtCard transition"
                                 onClick={increaseQuantity}
                             >
-                                <IoAdd size={16} />
+                                <IoAdd size={20} />
                             </button>
                         </div>
                     ) : (

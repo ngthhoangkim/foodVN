@@ -1,7 +1,7 @@
 import React from "react";
 import { CiTrash, CiShoppingCart } from "react-icons/ci";
 
-const FoodCard = ({ name, price, image, onDelete, onClick, role, onAddToCart }) => {
+const FoodCard = ({ name, price, image, onDelete, onClick }) => {
     //đổi định dạng tiền
     const numericPrice = Number(price);
     const formattedPrice = numericPrice % 1 === 0
@@ -23,28 +23,15 @@ const FoodCard = ({ name, price, image, onDelete, onClick, role, onAddToCart }) 
                 <h3 className="text-lg font-semibold text-txtCard">{name}</h3>
                 <p className="text-txtCard">{formattedPrice}</p>
             </div>
-            {/* button */}
-            {role === "admin" ? (
-                <button
-                    className="text-txtCard hover:text-redDark absolute bottom-2 right-2"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete();
-                    }}
-                >
-                    <CiTrash size={24} />
-                </button>
-            ) : (
-                <button
-                    className="text-txtCard hover:text-primary absolute bottom-2 right-2"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onAddToCart();
-                    }}
-                >
-                    <CiShoppingCart size={24} />
-                </button>
-            )}
+            <button
+                className="text-txtCard hover:text-redDark absolute bottom-2 right-2"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete();
+                }}
+            >
+                <CiTrash size={24} />
+            </button>
         </div>
     );
 };

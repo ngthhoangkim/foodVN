@@ -15,4 +15,5 @@ export const path = {
     ADMIN_CHEF: "chef",
     ADMIN_TABLE : "table",
     DETAIL_FOOD : "detail-food/:categoryName",
+    DETAIL : "detail/:foodID",
 };

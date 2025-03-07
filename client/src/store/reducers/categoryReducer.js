@@ -23,7 +23,7 @@ const categoryReducer = (state = initialState, action) => {
     case actionTypes.GET_ALL_CATEGORY:
       return {
         ...state,
-        categories: action.data || [],
+        categories: (action.data || []).filter((c) => c.categoryName),
         msg: action.msg || "",
         count: action.count || 0,
       };
