@@ -3,14 +3,17 @@ import { FaTrashAlt } from "react-icons/fa";
 import { IoAdd, IoRemove } from "react-icons/io5";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteCart, getCart, updateCart } from "../../store/actions";
+import { deleteCart, getCart, updateCart, updateOrder } from "../../store/actions";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import { path } from "../../ultils/constant";
 
 const ShoppingCart = () => {
 
   const { cartItems } = useSelector((state) => state.cart || []);
-  const { role, id } = useSelector((state) => state.auth);
+  const { id } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   //get all
   useEffect(() => {
@@ -19,8 +22,9 @@ const ShoppingCart = () => {
     }
   }, [id, dispatch]);
 
+  //thay đổi số lượng món
   const handleQuantityChange = (foodID, delta) => {
-  
+
     const item = cartItems.find((item) => item.foodID === foodID);
 
     const newQuantity = item.quantity + delta;
@@ -34,7 +38,7 @@ const ShoppingCart = () => {
     }
   };
 
-
+  //xóa món khỏi giỏ hàng
   const handleRemoveItem = (foodID) => {
     if (!id) return;
 
@@ -55,17 +59,43 @@ const ShoppingCart = () => {
     });
   };
 
+  //tính tiền
   const subtotal = Array.isArray(cartItems) ?
     cartItems.reduce((sum, item) => sum + (Number(item.food?.price) || 0) * (item.quantity || 0), 0)
     : 0;
 
-  const vat = subtotal * 0.1;
-  const total = subtotal + vat;
+  //gọi món
+  const orderFood = () => {
+    console.log("Bấm nút gọi món!");
+    dispatch(updateOrder(id))
+      .then(() => {  // Nếu Promise.resolve() hoạt động đúng, nó sẽ vào đây
+        Swal.fire({
+          title: "Thành công!",
+          text: "Gọi món thành công!",
+          icon: "success",
+          confirmButtonText: "Theo dõi món ăn",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate(`/${path.ORDER}`);
+          }
+        });
+      })
+      .catch((error) => {
+        console.log("Lỗi khi gọi món:", error);
+        Swal.fire({
+          title: "Thông báo!",
+          text: error.message || "Đã xảy ra lỗi trong quá trình gọi món",
+          icon: "warning",
+          confirmButtonText: "Thử lại",
+        });
+        dispatch(getCart(id));
+      });
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-6 mt-20">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
-        <h1 className="text-2xl text-primary font-bold text-center mb-4 mt-4">Hóa đơn</h1>
+        <h1 className="text-2xl text-primary font-bold text-center mb-4 mt-4">Giỏ hàng</h1>
         {cartItems.length > 0 ? (
           <table className="w-full text-left border-collapse">
             <thead>
@@ -125,6 +155,7 @@ const ShoppingCart = () => {
             </div>
             <motion.button
               className="relative overflow-hidden border-2 border-primary text-primary rounded-lg font-semibold text-lg transition-all duration-300 group mt-4 px-6 py-2"
+              onClick={orderFood}
             >
               <span className="relative z-10 group-hover:text-txtCard">Gọi món ngay</span>
               <span className="absolute inset-0 bg-gradientPrimary scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>

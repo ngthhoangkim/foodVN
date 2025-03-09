@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { CiShoppingCart } from "react-icons/ci";
 import { IoAdd, IoRemove } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { addCart, deleteCart, updateCart, getCart } from "../store/actions";
 import Swal from "sweetalert2";
+import { path } from "../ultils/constant";
 
 const MenuCard = ({ foodID, name, price, image }) => {
     const dispatch = useDispatch();
-    const { id } = useSelector((state) => state.auth);
+    const navigate = useNavigate();
+
+    const { isLoggedIn, id } = useSelector((state) => state.auth);
     const cartItems = useSelector((state) => Array.isArray(state.cart?.cartItems) ? state.cart.cartItems : []);
     useEffect(() => {
         if (id) {
@@ -36,8 +39,19 @@ const MenuCard = ({ foodID, name, price, image }) => {
     }, [cartItems, foodID]);
 
     const handleAddToCart = () => {
-        if (!id) {
-            Swal.fire("Thông báo", "Bạn cần đăng nhập để thêm vào giỏ hàng!", "warning");
+        if (!isLoggedIn) {
+            Swal.fire({
+                icon: "warning",
+                title: "Bạn chưa đăng nhập!",
+                text: "Vui lòng đăng nhập để có thể thêm món vào giỏ hàng!",
+                confirmButtonText: "Đăng nhập",
+                showCancelButton: true,
+                cancelButtonText: "Hủy",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigate(`/${path.LOGIN}`)
+                }
+            });
             return;
         }
         const newItem = { foodID, customerID: id, quantity: 1 };

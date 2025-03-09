@@ -4,6 +4,17 @@ import db from "../models";
 export const createCartService = (customerID, foodID, quantity) =>
   new Promise(async (resolve, reject) => {
     try {
+      const customer = await db.Customer.findOne({
+        where: { id: customerID }
+      });
+
+      if (!customer) {
+        return reject({
+          err: 1,
+          msg: "Khách hàng chưa đăng nhập!",
+        });
+      }
+
       let cart;
 
       // Kiểm tra xem món ăn đã có trong giỏ hàng chưa

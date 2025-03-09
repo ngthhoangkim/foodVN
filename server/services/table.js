@@ -1,4 +1,6 @@
 import db from "../models";
+const cloudinary = require('../config/cloudinary.config');
+import QRCode from "qrcode";
 
 // Create table
 export const createTableService = ({
@@ -28,18 +30,29 @@ export const createTableService = ({
         },
       });
 
-      if (created) {
-        resolve({
-          err: 0,
-          msg: "Thêm bàn thành công!",
-          data: table,
-        });
-      } else {
-        resolve({
-          err: 1,
-          msg: "Bàn đã tồn tại!",
-        });
+      if (!created) {
+        return resolve({ err: 1, msg: "Bàn đã tồn tại!" });
       }
+
+      // Tạo QR Code 
+      const qrData = `${tableNumber}`;
+      const qrCodeBase64 = await QRCode.toDataURL(qrData);
+
+      // Upload QR lên Cloudinary
+      const uploadResponse = await cloudinary.uploader.upload(qrCodeBase64, {
+        folder: "foodvn",
+        public_id: `table_${tableNumber}`,
+      });
+
+      // Lưu QR vào database
+      table.qrCode = uploadResponse.secure_url;
+      await table.save();
+
+      resolve({
+        err: 0,
+        msg: "Thêm bàn thành công!",
+        data: table,
+      });
     } catch (error) {
       reject(error);
     }

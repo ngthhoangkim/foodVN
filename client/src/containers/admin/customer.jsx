@@ -25,7 +25,7 @@ const Customer = () => {
                 <thead>
                     <tr className="bg-primary text-white">
                         <th className="px-4 py-2">ID</th>
-                        <th className="px-4 py-2">Username</th>
+                        <th className="px-4 py-2">Tên</th>
                         <th className="px-4 py-2">Email</th>
                         <th className="px-4 py-2">Số điện thoại</th>
                         {/* <th className="px-4 py-2">Trạng thái</th> */}

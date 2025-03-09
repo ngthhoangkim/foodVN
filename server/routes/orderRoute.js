@@ -11,6 +11,9 @@ router.post('/', orderController.createOrderController);
 router.get('/:id', orderController.getOrderController);
 
 //create order detail
-router.post('/detail', orderController.createOrderDetailController);
+// router.post('/detail', orderController.createOrderDetailController);
+
+//update 
+router.put('/update',orderController.updateOrderController);
 
 export default router;  

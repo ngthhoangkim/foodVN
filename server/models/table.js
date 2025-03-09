@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       maxQuantity: DataTypes.INTEGER,
       status: DataTypes.STRING,
       hallID: DataTypes.INTEGER,
+      qrCode: DataTypes.STRING,
     },
     {
       sequelize,

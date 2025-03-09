@@ -252,6 +252,7 @@ const Table = () => {
                                     tableNumber={`${table.tableNumber}`}
                                     peopleCount={table.maxQuantity}
                                     status={table.status}
+                                    qrCode={table.qrCode}
                                     onClick={() => openPopup(table)}
                                     onDelete={() => handleDeleteTable(table.id)}
                                 />

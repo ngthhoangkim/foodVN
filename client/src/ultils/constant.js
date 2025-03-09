@@ -16,4 +16,5 @@ export const path = {
     ADMIN_TABLE : "table",
     DETAIL_FOOD : "detail-food/:categoryName",
     DETAIL : "detail/:foodID",
+    ORDER: "order"
 };

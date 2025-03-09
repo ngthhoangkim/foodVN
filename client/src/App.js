@@ -2,8 +2,8 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { path } from "./ultils/constant";
 import "./css/App.css";
-import { FoodDetail, Home, HomePage, Login, Menu, Profile, ShoppingCart } from "./containers/public";
-import { Admin, AdminHome, ChefStaff, Customer, DetailFood, Food, Order, OrderStaff, Table } from "./containers/admin";
+import { FoodDetail, Home, HomePage, Login, Menu, Order, Profile, ShoppingCart } from "./containers/public";
+import { Admin, AdminHome, ChefStaff, Customer, DetailFood, Food, OrderStaff, Table } from "./containers/admin";
 
 
 function App() {
@@ -18,11 +18,11 @@ function App() {
           <Route path={path.PROFILE} element={<Profile />} />
           <Route path={path.MENU} element={<Menu />} />
           <Route path={path.DETAIL} element={<FoodDetail />} />
+          <Route path={path.ORDER} element={<Order/>} />
         </Route>
         {/* các trang dành cho admin */}
         <Route path={path.ADMIN} element={<Admin />}>
           <Route index element={<AdminHome />} />
-          <Route path={path.ADMIN_ORDER} element={<Order />} />
           <Route path={path.ADMIN_FOOD} element={<Food />} />
           <Route path={path.ADMIN_CUSTOMER} element={<Customer />} />
           <Route path={path.ADMIN_EMPLOYEE} element={<OrderStaff />} />
