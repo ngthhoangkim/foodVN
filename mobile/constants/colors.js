@@ -12,5 +12,5 @@ export const colors = {
     yellowDark: "#FFD65A",
     bgWhite: "#F6F8FA",
     greyLight: "#D9D9D9",
-    greyDark : "#6c757d"
+    grayDark : "#f3f4f6"
 }

@@ -4,32 +4,36 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { colors } from "../constants/colors";
 import { useDispatch } from "react-redux";
 import * as actions from "../store/actions";
+import { headerStyles } from "../assets/styles";
 
 const Header = ({ name, avatar }) => {
     const dispatch = useDispatch();
-    //logout
+
+    // Logout
     const handleLogout = () => {
         dispatch(actions.logout());
     };
-    //avatar mặc định
-    const defaultImg = require("../assets/images/logo.png")
+
+    // Ảnh đại diện mặc định
+    const defaultImg = require("../assets/images/logo.png");
+
     return (
-        <View className="h-16 bg-white flex-row items-center justify-between px-4 shadow-md">
+        <View style={headerStyles.container}>
             {/* Tên nhân viên và ảnh đại diện */}
-            <View className="flex-row items-center">
+            <View style={headerStyles.userInfo}>
                 <Image
                     source={avatar ? { uri: avatar } : defaultImg}
-                    className="w-10 h-10 rounded-full mr-3"
+                    style={headerStyles.avatar}
                 />
-
-                <Text className="text-xl font-bold text-text">{name}</Text>
+                <Text style={headerStyles.userName}>{name}</Text>
             </View>
+
             {/* Nút logout */}
             <TouchableOpacity onPress={handleLogout}>
                 <MaterialIcons name="logout" size={24} color={colors.redDark} />
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
-export default Header
+export default Header;

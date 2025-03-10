@@ -5,11 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import * as actions from "../../store/actions";
 import { colors } from "../../constants/colors";
+import { loginStyles } from "../../assets/styles";
 
 const Login = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { isLoggedIn, msg,role } = useSelector((state) => state.auth);
+  const { isLoggedIn, msg, role } = useSelector((state) => state.auth);
 
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -24,13 +25,13 @@ const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      if(role === 'employee' || role === 'chef' || role === 'admin'){
+      if (role === 'employee' || role === 'chef' || role === 'admin') {
         router.replace("/table");
-      } else{
+      } else {
         Alert.alert("Lỗi đăng nhập", "Tài khoản không có quyền truy cập!", [{ text: "OK" }]);
       }
     }
-  }, [isLoggedIn,role]);
+  }, [isLoggedIn, role]);
 
   // Hiển thị Alert khi có lỗi
   useEffect(() => {
@@ -42,45 +43,42 @@ const Login = () => {
   return (
     <ImageBackground
       source={require("../../assets/images/bg-login.png")}
-      className="flex-1 justify-center items-center"
-      resizeMode="cover"
+      style={loginStyles.backgroundImage}
     >
-      <View className="absolute top-0 left-0 right-0 bottom-0 bg-black/30" />
+      <View style={loginStyles.overlay} />
 
-      <View className="w-4/5 p-5 bg-bgWhite/60 rounded-2xl">
-        <Text className="text-xl text-txtCard text-center font-bold mb-5">
-          Đăng nhập
-        </Text>
+      <View style={loginStyles.container}>
+        <Text style={loginStyles.title}>Đăng nhập</Text>
 
         <TextInput
           placeholder="Số điện thoại"
           value={phone}
           onChangeText={setPhone}
-          className="bg-white p-3 rounded-lg mb-3"
+          style={loginStyles.input}
         />
 
-        <View className="flex-row items-center bg-white rounded-lg mb-5">
+        <View style={loginStyles.passwordContainer}>
           <TextInput
             placeholder="Mật khẩu"
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
-            className="flex-1 p-3"
+            style={loginStyles.passwordInput}
           />
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)} className="p-3">
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={loginStyles.iconButton}>
             <Feather name={showPassword ? "eye" : "eye-off"} size={18} color={colors.primary} />
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity
           onPress={handleLogin}
-          className={`bg-primary p-3 rounded-lg items-center ${loading ? "opacity-50" : ""}`}
+          style={[loginStyles.loginButton, loading && { opacity: 0.5 }]}
           disabled={loading}
         >
           {loading ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text className="text-white font-bold">Đăng nhập</Text>
+            <Text style={loginStyles.loginButtonText}>Đăng nhập</Text>
           )}
         </TouchableOpacity>
       </View>

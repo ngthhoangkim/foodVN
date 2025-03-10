@@ -5,6 +5,7 @@ import * as actions from "../../store/actions";
 import { TableCard } from "../../components";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { colors } from "../../constants/colors";
+import { tableStyles } from "../../assets/styles";
 
 const Table = () => {
   const dispatch = useDispatch();
@@ -17,9 +18,8 @@ const Table = () => {
   }, [dispatch]);
 
   return (
-    <View className="flex-1 bg-gray-100 p-4">
+    <View style={tableStyles.container}>
       {selectedHall === null ? (
-        // Hiển thị danh sách sảnh
         halls && halls.length > 0 ? (
           <FlatList
             data={halls}
@@ -27,35 +27,33 @@ const Table = () => {
             renderItem={({ item }) => (
               <TouchableOpacity
                 activeOpacity={0.7}
-                className="p-4 bg-primary rounded-lg mb-2 shadow-lg"
+                style={tableStyles.hallButton}
                 onPress={() => setSelectedHall(item.id)}
               >
-                <Text className="text-white text-lg font-semibold text-center">{item.name}</Text>
+                <Text style={tableStyles.hallText}>{item.name}</Text>
               </TouchableOpacity>
             )}
           />
         ) : (
-          <Text className="text-gray-600 text-lg mt-4 self-center">Không có sảnh nào</Text>
+          <Text style={tableStyles.noHallText}>Không có sảnh nào</Text>
         )
       ) : (
-        // Hiển thị danh sách bàn khi chọn một sảnh
         <>
-          <View className="flex-row items-center mb-4">
-            <TouchableOpacity onPress={() => setSelectedHall(null)} className="mr-2">
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
+            <TouchableOpacity onPress={() => setSelectedHall(null)} style={tableStyles.backButton}>
               <MaterialIcons name="arrow-back" size={24} color={colors.primary} />
             </TouchableOpacity>
-            <Text className="text-xl text-primary font-semibold">
+            <Text style={tableStyles.headerText}>
               Danh sách bàn - {halls.find((hall) => hall.id === selectedHall)?.name}
             </Text>
           </View>
 
-          {/* Hiển thị danh sách bàn */}
           <FlatList
             data={tables.filter((table) => table.hallID === selectedHall)}
             keyExtractor={(item) => item.id.toString()}
             numColumns={3}
             renderItem={({ item }) => <TableCard table={item} />}
-            contentContainerStyle={{ alignItems: "center" }}
+            contentContainerStyle={tableStyles.listContainer}
           />
         </>
       )}
