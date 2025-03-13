@@ -5,6 +5,7 @@ import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 import authReducer from "./authReducer";
 import tableReducer from "./tableReducer";
 import employeeReducer from "./employeeReducer";
+import orderReducer from "./orderReducer";
 
 
 const commonConfig = {
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   auth: persistReducer(authConfig,authReducer),
   table: tableReducer,
   employee : employeeReducer,
+  order: orderReducer
 });
 
 export default rootReducer;

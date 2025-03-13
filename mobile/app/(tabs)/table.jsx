@@ -7,6 +7,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { colors } from "../../constants/colors";
 import { tableStyles } from "../../assets/styles";
 
+
 const Table = () => {
   const dispatch = useDispatch();
   const { tables, halls } = useSelector((state) => state.table);
@@ -15,7 +16,7 @@ const Table = () => {
   useEffect(() => {
     dispatch(actions.getAllTable());
     dispatch(actions.getAllHall());
-  }, [dispatch]);
+  }, [dispatch, tables]);
 
   return (
     <View style={tableStyles.container}>
@@ -49,7 +50,9 @@ const Table = () => {
           </View>
 
           <FlatList
-            data={tables.filter((table) => table.hallID === selectedHall)}
+            data={[...tables]
+              .filter((table) => table.hallID === selectedHall)
+              .sort((a, b) => a.tableNumber - b.tableNumber)}
             keyExtractor={(item) => item.id.toString()}
             numColumns={3}
             renderItem={({ item }) => <TableCard table={item} />}

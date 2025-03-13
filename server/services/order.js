@@ -1,4 +1,5 @@
 import db from "../models";
+const { Op } = require("sequelize");
 
 //create order
 export const createOrderService = ({ customerID, tableNumber }) =>
@@ -27,65 +28,19 @@ export const createOrderService = ({ customerID, tableNumber }) =>
         total: 0,
       });
 
+      await db.Table.update({ status: "Đầy" }, { where: { id: table.id } });
+
       resolve({ err: 0, msg: "Tạo order thành công!", data: order });
     } catch (error) {
       reject(error);
     }
   });
-//create order detail
-// export const createOrderDetailService = ({ orderID, foodID, quantity }) =>
-//   new Promise(async (resolve, reject) => {
-//     try {
-//       const order = await db.Order.findOne({
-//         where: { id: orderID, status: "pending" },
-//       });
-//       if (!order) {
-//         return resolve({
-//           err: 1,
-//           msg: "Order không tồn tại!",
-//         });
-//       }
-//       // Lấy giá của món ăn
-//       const food = await db.Food.findOne({ where: { id: foodID } });
-//       if (!food) {
-//         return resolve({ err: 1, msg: "Món ăn không tồn tại!" });
-//       }
-//       const totalPrice = food.price * quantity;
-
-//       const [orderDetail, created] = await db.OrderDetail.findOrCreate({
-//         where: { orderID, foodID },
-//         defaults: { orderID, foodID, quantity, totalPrice, status: "pending" },
-//       });
-//       //tính tổng cho order detail
-//       if (!created) {
-//         orderDetail.quantity += quantity;
-//         orderDetail.totalPrice = food.price * orderDetail.quantity;
-//         await orderDetail.save();
-//       }
-//       //tính tổng cho order
-//       const totalOrderPrice = await db.OrderDetail.sum("totalPrice", {
-//         where: { orderID },
-//       });
-//       order.total = totalOrderPrice;
-//       await order.save();
-
-//       resolve({
-//         err: 0,
-//         msg: created
-//           ? "Thêm món thành công!"
-//           : "Cập nhật số lượng món thành công!",
-//         data: orderDetail,
-//       });
-//     } catch (error) {
-//       reject(error);
-//     }
-//   });
 //get order
 export const getOrderService = (customerID) =>
   new Promise(async (resolve, reject) => {
     try {
       const order = await db.Order.findOne({
-        where: { customerID, status: "pending" },
+        where: { customerID },
         attributes: ["id", "voucherID", "status", "total"],
         include: [
           {
@@ -97,6 +52,13 @@ export const getOrderService = (customerID) =>
             model: db.Table,
             as: "table",
             attributes: ["tableNumber"],
+            include: [
+              {
+                model: db.Hall,
+                as: "hall",
+                attributes: ["name"], 
+              },
+            ],
           },
           {
             model: db.OrderDetail,
@@ -106,7 +68,7 @@ export const getOrderService = (customerID) =>
               {
                 model: db.Food,
                 as: "food",
-                attributes: ["id","name", "price", "foodImg"],
+                attributes: ["id", "name", "price", "foodImg"],
               },
             ],
           },
@@ -129,12 +91,15 @@ export const getOrderService = (customerID) =>
       reject(error);
     }
   });
-//update order
+//update order dùng để thêm món từ giỏ hàng vào
 export const updateOrderService = ({ customerID }) =>
   new Promise(async (resolve, reject) => {
     try {
       const order = await db.Order.findOne({
-        where: { customerID, status: "pending" },
+        where: {
+          customerID,
+          status: { [Op.ne]: "complete" }, // Nếu đơn đã hoàn tất thì không được gọi nữa
+        },
       });
 
       if (!order) {
@@ -155,25 +120,38 @@ export const updateOrderService = ({ customerID }) =>
 
         const totalPrice = food.price * quantity;
 
-        const [orderDetail, created] = await db.OrderDetail.findOrCreate({
+        // Tìm món ăn trong OrderDetail
+        const existingOrderDetail = await db.OrderDetail.findOne({
           where: { orderID: order.id, foodID },
-          defaults: {
+        });
+
+        if (existingOrderDetail) {
+          if (existingOrderDetail.status === "served") {
+            // Nếu món đã hoàn thành, tạo một dòng mới với trạng thái "pending"
+            await db.OrderDetail.create({
+              orderID: order.id,
+              foodID,
+              quantity,
+              totalPrice,
+              status: "pending",
+            });
+            additionalTotalPrice += totalPrice;
+          } else {
+            // Nếu món chưa hoàn thành, chỉ tăng số lượng và tổng giá
+            additionalTotalPrice += quantity * food.price;
+            existingOrderDetail.quantity += quantity;
+            existingOrderDetail.totalPrice = existingOrderDetail.quantity * food.price;
+            await existingOrderDetail.save();
+          }
+        } else {
+          // Nếu là món mới hoàn toàn, tạo mới
+          await db.OrderDetail.create({
             orderID: order.id,
             foodID,
             quantity,
             totalPrice,
             status: "pending",
-          },
-        });
-
-        if (!created) {
-          // Chỉ cộng thêm số lượng mới vào tổng đơn hàng
-          additionalTotalPrice += quantity * food.price;
-          orderDetail.quantity += quantity;
-          orderDetail.totalPrice = orderDetail.quantity * food.price;
-          await orderDetail.save();
-        } else {
-          // Nếu là món mới hoàn toàn, cộng toàn bộ giá trị của nó vào đơn hàng
+          });
           additionalTotalPrice += totalPrice;
         }
       }
@@ -191,7 +169,8 @@ export const updateOrderService = ({ customerID }) =>
     }
   });
 
-//update status
+
+//update food status
 export const updateFoodStatusService = ({ orderDetailID, status }) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -206,6 +185,74 @@ export const updateFoodStatusService = ({ orderDetailID, status }) =>
         err: 0,
         msg: "Cập nhật trạng thái món ăn thành công!",
         data: orderDetail,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+// Update order status
+export const updateOrderStatusService = ({ orderID, status }) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const order = await db.Order.findByPk(orderID);
+      if (!order) return resolve({ err: 1, msg: "Đơn hàng không tồn tại!" });
+
+      order.status = status;
+      await order.save();
+
+      resolve({
+        err: 0,
+        msg: "Cập nhật trạng thái đơn hàng thành công!",
+        data: order,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+//get all
+export const getAllOrderService = () =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.Order.findAll({
+        attributes: ["id", "voucherID", "status", "total", "createdAt"], 
+        include: [
+          {
+            model: db.Customer,
+            as: "customer",
+            attributes: ["id","customerName"], 
+          },
+          {
+            model: db.Table,
+            as: "table",
+            attributes: ["id","tableNumber"], 
+            include: [
+              {
+                model: db.Hall,
+                as: "hall",
+                attributes: ["name"], 
+              },
+            ],
+          },
+          {
+            model: db.OrderDetail,
+            as: "orderDetails",
+            attributes: ["id","quantity", "totalPrice", "status"],
+            include: [
+              {
+                model: db.Food,
+                as: "food",
+                attributes: ["id", "name", "price", "foodImg"],
+              },
+            ],
+          },
+        ],
+      });
+
+      resolve({
+        err: 0,
+        msg: "Lấy danh sách order thành công!",
+        data: response,
+        count: response.length,
       });
     } catch (error) {
       reject(error);

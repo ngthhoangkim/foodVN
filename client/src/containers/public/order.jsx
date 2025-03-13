@@ -18,7 +18,7 @@ const Order = () => {
   return (
     <div className="w-full max-w-6xl mx-auto mt-32 p-4">
       <h1 className="text-3xl text-primary font-bold text-center mb-6">
-        Lịch sử gọi món
+        Gọi món
       </h1>
 
       <Tabs.Root defaultValue="followFood">
@@ -45,36 +45,49 @@ const Order = () => {
 
         {/* Tab Theo dõi món ăn */}
         <Tabs.Content value="followFood" className="p-4 bg-white rounded-b-md shadow">
-          {order && order.orderDetails?.length > 0 ? (
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="text-primary">
-                  <th className="border-b p-4">Món ăn</th>
-                  <th className="border-b p-4 text-center">Số lượng</th>
-                  <th className="border-b p-4 text-center">Trạng thái</th>
-                </tr>
-              </thead>
-              <tbody>
-                {order.orderDetails.map((item) => (
-                  <tr key={item.food.id} className="hover:bg-gray-100">
-                    <td className="p-4 flex items-center">
-                      <img src={item.food.foodImg} alt={item.food.name} className="w-12 h-12 rounded mr-4" />
-                      {item.food.name}
-                    </td>
-                    <td className="p-4 text-center">{item.quantity}</td>
-                    <td className="p-4 text-center">
-                      <span
-                        className={`px-3 py-1 text-base border-2 rounded-lg ${item.status === "pending" ? "text-primary border-primary" : "text-greenDark border-greenDark"}`}
-                      >
-                        {item.status === "pending" ? "Món đang được chế biến" : "Đã lên món"}
-                      </span>
-                    </td>
+          {order && (order.status === "pending" || order.status === "preparing") ? (
+            order.orderDetails?.length > 0 ? (
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="text-primary">
+                    <th className="border-b p-4">Món ăn</th>
+                    <th className="border-b p-4 text-center">Số lượng</th>
+                    <th className="border-b p-4 text-center">Trạng thái</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {order.orderDetails.map((item) => (
+                    <tr key={item.food.id} className="hover:bg-gray-100">
+                      <td className="p-4 flex items-center">
+                        <img src={item.food.foodImg} alt={item.food.name} className="w-12 h-12 rounded mr-4" />
+                        {item.food.name}
+                      </td>
+                      <td className="p-4 text-center">{item.quantity}</td>
+                      <td className="p-4 text-center">
+                        <span
+                          className={`px-3 py-1 text-base border-2 rounded-lg ${item.status === "pending"
+                              ? "text-primary border-primary"
+                              : item.status === "complete"
+                                ? "text-greenDark border-greenDark"
+                                : "text-greenDark border-greenDark" 
+                            }`}
+                        >
+                          {item.status === "pending"
+                            ? "Món đang được chế biến"
+                            : item.status === "complete"
+                              ? "Món đã chế biến xong"
+                              : "Món đã được phục vụ"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="text-center text-gray-500">Bạn chưa gọi món nào.</p>
+            )
           ) : (
-            <p className="text-center text-gray-500">Bạn chưa gọi món nào.</p>
+            <p className="text-center text-gray-500">Không có đơn hàng đang chờ xử lý.</p>
           )}
         </Tabs.Content>
 

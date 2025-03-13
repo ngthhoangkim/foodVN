@@ -1,4 +1,4 @@
-import { apiCreateOrder, apiCreateOrderDetail, apiGetOrder, apiUpdateOrder } from "../../services/order";
+import { apiCreateOrder, apiGetOrder, apiUpdateOrder } from "../../services/order";
 import actionTypes from "./actionTypes";
 
 //create order
@@ -83,29 +83,3 @@ export const updateOrder = (customerID) => async (dispatch) => {
     );
   }
 };
-
-// //create order detail
-// export const createOrderDetail = (payload) => async (dispatch) => {
-//   try {
-//     const response = await apiCreateOrderDetail(payload);
-//     if (response.data.err === 0) {
-//       dispatch({
-//         type: actionTypes.CREATE_ORDERDETAIL_SUCCESS,
-//         data: response.data.data,
-//       });
-//       return Promise.resolve(response.data);
-//     } else {
-//       dispatch({
-//         type: actionTypes.CREATE_ORDERDETAIL_FAIL,
-//         data: response.msg,
-//       });
-//       return Promise.reject(new Error(response.data.msg));
-//     }
-//   } catch (error) {
-//     dispatch({
-//       type: actionTypes.CREATE_ORDER_FAIL,
-//       data: "Có lỗi xảy ra khi thêm món vào order",
-//     });
-//     return Promise.reject(new Error("Có lỗi xảy ra khi thêm món vào order"));
-//   }
-// };

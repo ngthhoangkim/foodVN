@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "expo-router";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { colors } from "../constants/colors";
@@ -8,10 +9,12 @@ import { headerStyles } from "../assets/styles";
 
 const Header = ({ name, avatar }) => {
     const dispatch = useDispatch();
+     const router = useRouter();
 
     // Logout
     const handleLogout = () => {
         dispatch(actions.logout());
+        router.replace("/login");
     };
 
     // Ảnh đại diện mặc định

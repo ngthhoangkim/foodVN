@@ -7,6 +7,7 @@ import * as actions from "../../store/actions";
 import { colors } from "../../constants/colors";
 import { loginStyles } from "../../assets/styles";
 
+
 const Login = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -25,7 +26,9 @@ const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      if (role === 'employee' || role === 'chef' || role === 'admin') {
+      if (role === "chef") {
+        router.replace("/order");
+      } else if (role === "employee" || role === "admin") {
         router.replace("/table");
       } else {
         Alert.alert("Lỗi đăng nhập", "Tài khoản không có quyền truy cập!", [{ text: "OK" }]);

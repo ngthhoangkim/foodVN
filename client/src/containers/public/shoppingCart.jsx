@@ -66,9 +66,8 @@ const ShoppingCart = () => {
 
   //gọi món
   const orderFood = () => {
-    console.log("Bấm nút gọi món!");
     dispatch(updateOrder(id))
-      .then(() => {  // Nếu Promise.resolve() hoạt động đúng, nó sẽ vào đây
+      .then(() => {  
         Swal.fire({
           title: "Thành công!",
           text: "Gọi món thành công!",
@@ -77,6 +76,7 @@ const ShoppingCart = () => {
         }).then((result) => {
           if (result.isConfirmed) {
             navigate(`/${path.ORDER}`);
+            dispatch(getCart(id));
           }
         });
       })

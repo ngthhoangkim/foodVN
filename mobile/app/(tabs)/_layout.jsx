@@ -1,25 +1,39 @@
-import React,{useEffect} from "react";
-import { Tabs } from "expo-router";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Stack, Tabs } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Header } from "../../components";
-import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../store/actions";
 
 const Layout = () => {
   const dispatch = useDispatch();
-  const { id } = useSelector((state) => state.auth);
+  const { id, role } = useSelector((state) => state.auth);
   const { employee } = useSelector((state) => state.employee);
-  //get one employee
+
   useEffect(() => {
     if (id) {
       dispatch(actions.getOneEmployee(id));
     }
   }, [id, dispatch]);
 
+  if (role === "chef") {
+    // 🔥 Nếu role là "chef", chỉ hiển thị màn hình order mà không có Tabs
+    return (
+      <Stack>
+        <Stack.Screen
+          name="order"
+          options={{
+            header: () => <Header name={employee.employeeName} avatar={employee.employeeImg} />,
+          }}
+        />
+      </Stack>
+    );
+  }
+
   return (
     <Tabs
       screenOptions={{
-        header: () => <Header name={employee.employeeName} avatar={employee.employeeImg}/>,
+        header: () => <Header name={employee.employeeName} avatar={employee.employeeImg} />,
         tabBarActiveTintColor: "#007AFF",
       }}
     >

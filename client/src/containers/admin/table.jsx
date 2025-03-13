@@ -25,7 +25,7 @@ const Table = () => {
     useEffect(() => {
         dispatch(getAllTable());
         dispatch(getAllHall());
-    }, [dispatch]);
+    }, [dispatch,tables]);
 
     //xử lý tab
     useEffect(() => {

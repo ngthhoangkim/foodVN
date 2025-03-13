@@ -54,7 +54,7 @@ export const updateOrderController = async (req, res) => {
     res.status(500).json({ ["Fail at update order:"]: error.message });
   }
 };
-//update status food
+//update food status
 export const updateFoodSatus = async (req, res) => {
   const { status } = req.body;
   try {
@@ -66,5 +66,28 @@ export const updateFoodSatus = async (req, res) => {
     return res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ ["Fail at update status:"]: error.message });
+  }
+};
+//update order status
+export const updateOrderSatus = async (req, res) => {
+  const { status } = req.body;
+  try {
+    if (!status) {
+      return res.status(400).json({ err: 1, msg: "Không có thông tin để cập nhật!" });
+    }
+
+    const response = await orderService.updateOrderStatusService(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ ["Fail at update status:"]: error.message });
+  }
+};
+//get all
+export const getAllOrderController = async (req, res) => {
+  try {
+    const categories = await orderService.getAllOrderService();
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(500).json({ ["Fail at get order:"]: error.message });
   }
 };
