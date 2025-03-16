@@ -23,6 +23,19 @@ const DetailFood = () => {
   const { foods } = useSelector((state) => state.food);
   const { role } = useSelector(state => state.auth)
 
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+  const filteredFoods = foods.filter((food) => food.category && food.category.categoryName === categoryName);
+
+  const totalPages = Math.ceil(filteredFoods.length / itemsPerPage);
+  const currentFoods = filteredFoods.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
   //get all food
   const dispatch = useDispatch();
   useEffect(() => {
@@ -140,20 +153,49 @@ const DetailFood = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {foods
-          .filter((food) => food.category && food.category.categoryName === categoryName)
-          .map((food, index) => (
-            <FoodCard
-              key={index}
-              name={food.name}
-              price={food.price}
-              image={food.foodImg}
-              onDelete={() => handleDeleteFood(food.id)}
-              onClick={() => openPopup(food)}
-              role={role}
-            />
-          ))}
+        {currentFoods.map((food, index) => (
+          <FoodCard
+            key={index}
+            name={food.name}
+            price={food.price}
+            image={food.foodImg}
+            onDelete={() => handleDeleteFood(food.id)}
+            onClick={() => openPopup(food)}
+            role={role}
+          />
+        ))}
       </div>
+      {/* phân trang */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-6">
+          <button
+            className="px-4 py-2 mx-1 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            &lt;
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              className={`px-4 py-2 mx-1 border rounded-lg ${currentPage === i + 1 ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"
+                }`}
+              onClick={() => handlePageChange(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          <button
+            className="px-4 py-2 mx-1 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            &gt;
+          </button>
+        </div>
+      )}
       {/* popup thêm */}
       {isAddPopupVisible && (
         <PopupFood

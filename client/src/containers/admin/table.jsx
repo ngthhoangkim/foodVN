@@ -21,18 +21,34 @@ const Table = () => {
     const dispatch = useDispatch();
     const { tables, halls } = useSelector((state) => state.table);
 
+    //phân trang
+    const [currentPage, setCurrentPage] = useState(1);
+    const tablesPerPage = 8; // Số bàn trên mỗi trang
+    const filteredTables = tables.filter((table) => table.hallID === activeHall);
+    const totalPages = Math.ceil(filteredTables.length / tablesPerPage);
+
+    const indexOfLastTable = currentPage * tablesPerPage;
+    const indexOfFirstTable = indexOfLastTable - tablesPerPage;
+    const currentTables = filteredTables
+        .sort((a, b) => a.tableNumber - b.tableNumber) 
+    .slice(indexOfFirstTable, indexOfLastTable);;
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
+
     // Get all table
     useEffect(() => {
         dispatch(getAllTable());
         dispatch(getAllHall());
-    }, [dispatch,tables]);
+    }, [dispatch, tables]);
 
     //xử lý tab
     useEffect(() => {
-        if (halls.length > 0) {
-            setActiveHall(halls[0].id);
-        }
-    }, [halls]);
+        console.log("Updated activeHall:", activeHall);
+    }, [activeHall]);
+
     //xử lý popup sảnh
     const openHallPopup = () => {
         setIsHallPopupVisible(true);
@@ -201,7 +217,7 @@ const Table = () => {
                                 key={hall.id}
                                 className={`relative flex items-center justify-between w-full p-3 text-lg font-medium rounded-lg 
                     ${isActive ? "bg-primary text-white" : "bg-gray-200 text-txtCard hover:bg-gray-300"}`}
-                                onClick={() => setActiveHall(hall.id)}
+                                onClick={() => { setActiveHall(hall.id); }}
                             >
                                 {hall.name}
                                 <div className="flex items-center space-x-2">
@@ -233,36 +249,62 @@ const Table = () => {
             <div className="w-3/4">
                 <div className="flex justify-between items-center mb-6 relative">
                     <h1 className="text-xl text-primary font-medium">Quản lý bàn</h1>
-                    <button
-                        onClick={openAddPopup}
-                        className="absolute top-0 right-0 text-primary"
-                    >
+                    <button onClick={openAddPopup} className="absolute top-0 right-0 text-primary">
                         <MdAddBox size={30} />
                     </button>
                 </div>
 
-                <div className="grid grid-cols-4 gap-4">
-                    {tables && tables.length > 0 ? (
-                        tables
-                            .filter((table) => table.hallID === activeHall)
-                            .sort((a, b) => a.tableNumber - b.tableNumber)
-                            .map((table) => (
-                                <TableCard
-                                    key={table.id}
-                                    tableNumber={`${table.tableNumber}`}
-                                    peopleCount={table.maxQuantity}
-                                    status={table.status}
-                                    qrCode={table.qrCode}
-                                    onClick={() => openPopup(table)}
-                                    onDelete={() => handleDeleteTable(table.id)}
-                                />
-                            ))
+                <div className="grid grid-cols-4 gap-7">
+                    {currentTables.length > 0 ? (
+                        currentTables.map((table) => (
+                            <TableCard
+                                key={table.id}
+                                tableNumber={`${table.tableNumber}`}
+                                peopleCount={table.maxQuantity}
+                                status={table.status}
+                                qrCode={table.qrCode}
+                                onClick={() => openPopup(table)}
+                                onDelete={() => handleDeleteTable(table.id)}
+                            />
+                        ))
                     ) : (
                         <div className="col-span-4 text-center text-gray-500">
                             Không có bàn nào.
                         </div>
                     )}
                 </div>
+
+                {/* Phân trang */}
+                {totalPages > 1 && (
+                    <div className="w-full flex justify-center mt-6">
+                        <button
+                            className="px-4 py-2 mx-1 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            &lt;
+                        </button>
+
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <button
+                                key={i + 1}
+                                className={`px-4 py-2 mx-1 border rounded-lg ${currentPage === i + 1 ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"
+                                    }`}
+                                onClick={() => handlePageChange(i + 1)}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            className="px-4 py-2 mx-1 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            &gt;
+                        </button>
+                    </div>
+                )}
             </div>
             <div>
                 {/* Popup sửa */}
@@ -275,7 +317,6 @@ const Table = () => {
                         onEdit={handleUpdateTable}
                     />
                 )}
-
                 {/* Popup thêm */}
                 {isAddPopupVisible && (
                     <PopupTable

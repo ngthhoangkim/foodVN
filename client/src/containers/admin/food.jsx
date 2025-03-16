@@ -6,12 +6,15 @@ import { MdAddBox } from "react-icons/md";
 import { createCategory, deleteCategory, getAllCategory, updateCategory } from "../../store/actions";
 import { useNavigate } from "react-router-dom";
 import { path } from "../../ultils/constant";
+import { GrFormNextLink, GrFormPreviousLink } from "react-icons/gr";
 
 const Food = () => {
     const [isAddPopupVisible, setIsAddPopupVisible] = useState(false);
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [newCategory, setNewCategory] = useState({ name: "" });
+    const dispatch = useDispatch();
+    const { categories } = useSelector((state) => state.category);
 
     //xử lý truyền tên loại vào trang detail food
     const navigate = useNavigate();
@@ -19,8 +22,27 @@ const Food = () => {
         navigate(`/admin/${path.DETAIL_FOOD.replace(':categoryName', category.categoryName)}`);
     };
 
-    const dispatch = useDispatch();
-    const { categories } = useSelector((state) => state.category);
+    //phân trangg
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 12;
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+          setCurrentPage(newPage);
+        }
+      };
+    
+    // Xử lý phân trang
+    const totalPages = Math.ceil(categories.length / itemsPerPage);
+    const currentCategories = categories.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+    const goToNextPage = () => {
+        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+    };
+    const goToPrevPage = () => {
+        if (currentPage > 1) setCurrentPage(currentPage - 1);
+    };
+
+
     //get all
     useEffect(() => {
         dispatch(getAllCategory());
@@ -110,7 +132,7 @@ const Food = () => {
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
-                {categories.map((category, index) => (
+                {currentCategories.map((category, index) => (
                     <CategoryCard
                         key={index}
                         category={category.categoryName}
@@ -120,6 +142,38 @@ const Food = () => {
                     />
                 ))}
             </div>
+            {/* phân trang */}
+            {totalPages > 1 && (
+                <div className="flex justify-center items-center mt-6">
+                    <button
+                        className="px-4 py-2 mx-1 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        &lt;
+                    </button>
+
+                    {Array.from({ length: totalPages }, (_, i) => (
+                        <button
+                            key={i + 1}
+                            className={`px-4 py-2 mx-1 border rounded-lg ${currentPage === i + 1 ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"
+                                }`}
+                            onClick={() => handlePageChange(i + 1)}
+                        >
+                            {i + 1}
+                        </button>
+                    ))}
+
+                    <button
+                        className="px-4 py-2 mx-1 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        &gt;
+                    </button>
+                </div>
+            )}
+
             {/* popup sửa */}
             {isPopupVisible && selectedCategory && (
                 <PopupCategory
