@@ -24,3 +24,5 @@ yarn-debug.log*
 yarn-error.log*
 
 /config/config.json
+/config/firebaseConfig.js
+/config/serviceAccountKey.json

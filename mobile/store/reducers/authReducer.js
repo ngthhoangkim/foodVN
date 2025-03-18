@@ -4,6 +4,7 @@ const initState = {
   isLoggedIn: false,
   token: null,
   msg: "",
+  fcmToken:null
 };
 
 const authReducer = (state = initState, action) => {
@@ -15,6 +16,7 @@ const authReducer = (state = initState, action) => {
         token: action.data.token,
         role: action.data.role,
         id: action.data.id,
+        fcmToken: action.data.fcmToken,
         msg: "",
       };
     case actionTypes.LOGIN_FAIL:

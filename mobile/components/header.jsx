@@ -1,20 +1,42 @@
-import React from "react";
-import { useRouter } from "expo-router";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Image, Modal, FlatList } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { colors } from "../constants/colors";
 import { useDispatch } from "react-redux";
 import * as actions from "../store/actions";
 import { headerStyles } from "../assets/styles";
+import messaging from "@react-native-firebase/messaging";
 
 const Header = ({ name, avatar }) => {
     const dispatch = useDispatch();
-     const router = useRouter();
+    const [notifications, setNotifications] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
 
-    // Logout
+    // Lắng nghe thông báo từ Firebase
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async (remoteMessage) => {
+            setNotifications((prev) => [
+                ...prev,
+                {
+                    id: new Date().getTime(),
+                    title: remoteMessage.notification?.title || "Thông báo",
+                    body: remoteMessage.notification?.body || "Có cập nhật mới!",
+                },
+            ]);
+        });
+
+        return unsubscribeOnMessage;
+    }, []);
+
+    // Xử lý đăng xuất
     const handleLogout = () => {
         dispatch(actions.logout());
-        router.replace("/login");
+    };
+
+    // Xóa thông báo khi đã xem
+    const handleClearNotifications = () => {
+        setNotifications([]);
+        setModalVisible(false);
     };
 
     // Ảnh đại diện mặc định
@@ -22,19 +44,51 @@ const Header = ({ name, avatar }) => {
 
     return (
         <View style={headerStyles.container}>
-            {/* Tên nhân viên và ảnh đại diện */}
+            {/* Thông tin người dùng */}
             <View style={headerStyles.userInfo}>
-                <Image
-                    source={avatar ? { uri: avatar } : defaultImg}
-                    style={headerStyles.avatar}
-                />
+                <Image source={avatar ? { uri: avatar } : defaultImg} style={headerStyles.avatar} />
                 <Text style={headerStyles.userName}>{name}</Text>
             </View>
 
-            {/* Nút logout */}
-            <TouchableOpacity onPress={handleLogout}>
-                <MaterialIcons name="logout" size={24} color={colors.redDark} />
-            </TouchableOpacity>
+            {/* Nhóm icon thông báo và logout */}
+            <View style={headerStyles.rightIcons}>
+                {/* Nút thông báo */}
+                <TouchableOpacity style={headerStyles.notificationButton} onPress={() => setModalVisible(true)}>
+                    <MaterialIcons name="notifications" size={20} color={colors.primary} />
+                    {notifications.length > 0 && (
+                        <View style={headerStyles.badge}>
+                            <Text style={headerStyles.badgeText}>{notifications.length}</Text>
+                        </View>
+                    )}
+                </TouchableOpacity>
+
+                {/* Nút logout */}
+                <TouchableOpacity onPress={handleLogout} style={headerStyles.logoutButton}>
+                    <MaterialIcons name="logout" size={22} color={colors.redDark} />
+                </TouchableOpacity>
+            </View>
+
+            {/* Modal danh sách thông báo */}
+            <Modal visible={modalVisible} animationType="slide" transparent={true}>
+                <View style={headerStyles.modalContainer}>
+                    <View style={headerStyles.modalContent}>
+                        <Text style={headerStyles.modalTitle}>Thông báo mới</Text>
+                        <FlatList
+                            data={notifications}
+                            keyExtractor={(item) => item.id.toString()}
+                            renderItem={({ item }) => (
+                                <View style={headerStyles.notificationItem}>
+                                    <Text style={headerStyles.notificationTitle}>{item.title}</Text>
+                                    <Text style={headerStyles.notificationBody}>{item.body}</Text>
+                                </View>
+                            )}
+                        />
+                        <TouchableOpacity onPress={handleClearNotifications} style={headerStyles.closeButton}>
+                            <Text style={headerStyles.closeButtonText}>Đóng</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };

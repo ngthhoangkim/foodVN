@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "employeeID",
         as: "notifies",
       });
+      Employee.hasMany(models.Order, {
+        foreignKey: "employeeID",
+        as: "orders",
+      });
     }
   }
   Employee.init(
@@ -21,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       employeePhone: DataTypes.STRING,
       employeeImg: DataTypes.STRING,
       employeeGender: DataTypes.STRING,
+      fcmToken: DataTypes.STRING,
     },
     {
       sequelize,

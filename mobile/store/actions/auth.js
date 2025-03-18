@@ -13,6 +13,7 @@ export const login = (payload) => async (dispatch) => {
             token: response.data.token,
             role: response.data.role,
             id : response.data.id,
+            fcmToken: response.data.fcmToken,
           },
         });
       } else {

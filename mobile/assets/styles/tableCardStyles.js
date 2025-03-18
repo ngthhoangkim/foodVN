@@ -31,9 +31,24 @@ export const tableCardStyles = StyleSheet.create({
     backgroundColor: colors.redDark, // "Đầy"
   },
   calling: {
-    backgroundColor: colors.yellowDark, // "Đang gọi"
+    backgroundColor: colors.primary, // bàn đang gọi phục vụ
   },
   default: {
     backgroundColor: "gray",
   },
+  handleButton: {
+    borderRadius: 5, 
+    marginTop: 5, 
+    justifyContent: "center", 
+    alignItems: "center",
+    borderWidth: 1, 
+    borderColor: colors.bgWhite, 
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  handleText: {
+    color: "white", 
+    fontSize: 11, 
+    fontWeight: "bold", 
+  }
 });

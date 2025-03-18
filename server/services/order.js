@@ -1,5 +1,7 @@
 import db from "../models";
+import { sendNotification } from "./notification";
 const { Op } = require("sequelize");
+const admin = require("../config/firebaseConfig");
 
 //create order
 export const createOrderService = ({ customerID, tableNumber }) =>
@@ -10,7 +12,10 @@ export const createOrderService = ({ customerID, tableNumber }) =>
       if (!table) {
         return resolve({ err: 1, msg: "Bàn không tồn tại!" });
       }
-
+      //Bàn đầy thì báo bàn khác
+      if (table.status !== "Trống") {
+        return resolve({ err: 1, msg: "Bàn đã có khách, mời bạn chọn bàn!" });
+      }
       // Kiểm tra khách đã có order chưa
       const existingOrder = await db.Order.findOne({
         where: { customerID, status: "pending" },
@@ -39,9 +44,9 @@ export const createOrderService = ({ customerID, tableNumber }) =>
 export const getOrderService = (customerID) =>
   new Promise(async (resolve, reject) => {
     try {
-      const order = await db.Order.findOne({
+      const order = await db.Order.findAll({
         where: { customerID },
-        attributes: ["id", "voucherID", "status", "total"],
+        attributes: ["id", "voucherID", "status", "total","updatedAt"],
         include: [
           {
             model: db.Customer,
@@ -51,12 +56,12 @@ export const getOrderService = (customerID) =>
           {
             model: db.Table,
             as: "table",
-            attributes: ["tableNumber"],
+            attributes: ["id", "tableNumber"],
             include: [
               {
                 model: db.Hall,
                 as: "hall",
-                attributes: ["name"], 
+                attributes: ["name"],
               },
             ],
           },
@@ -100,6 +105,20 @@ export const updateOrderService = ({ customerID }) =>
           customerID,
           status: { [Op.ne]: "complete" }, // Nếu đơn đã hoàn tất thì không được gọi nữa
         },
+        include: [
+          {
+            model: db.Table,
+            as: "table",
+            attributes: ["tableNumber"],
+            include: [
+              {
+                model: db.Hall,
+                as: "hall",
+                attributes: ["name"],
+              },
+            ],
+          },
+        ],
       });
 
       if (!order) {
@@ -140,7 +159,8 @@ export const updateOrderService = ({ customerID }) =>
             // Nếu món chưa hoàn thành, chỉ tăng số lượng và tổng giá
             additionalTotalPrice += quantity * food.price;
             existingOrderDetail.quantity += quantity;
-            existingOrderDetail.totalPrice = existingOrderDetail.quantity * food.price;
+            existingOrderDetail.totalPrice =
+              existingOrderDetail.quantity * food.price;
             await existingOrderDetail.save();
           }
         } else {
@@ -163,23 +183,78 @@ export const updateOrderService = ({ customerID }) =>
       // Xóa giỏ hàng
       await db.Cart.destroy({ where: { customerID } });
 
+      //thông báo
+      const tableNumber = order.table?.tableNumber || "Không rõ";
+      const hallName = order.table?.hall?.name || "Không rõ";
+      await sendNotification(
+        "employee",
+        "Khách vừa gọi món",
+        `Bàn ${tableNumber} - ${hallName} vừa gọi món, vui lòng chuẩn bị.`
+      );
+
       resolve({ err: 0, msg: "Cập nhật đơn hàng thành công!", data: order });
     } catch (error) {
       reject(error);
     }
   });
-
-
 //update food status
 export const updateFoodStatusService = ({ orderDetailID, status }) =>
   new Promise(async (resolve, reject) => {
     try {
-      const orderDetail = await db.OrderDetail.findByPk(orderDetailID);
-      if (!orderDetail)
-        return resolve({ err: 1, msg: "Món ăn không tồn tại!" });
+      const orderDetail = await db.OrderDetail.findByPk(orderDetailID, {
+        include: [
+          {
+            model: db.Order,
+            as: "order",
+            include: [
+              {
+                model: db.Table,
+                as: "table",
+                include: [{ model: db.Hall, as: "hall" }],
+              },
+            ],
+          },
+          {
+            model: db.Food,
+            as: "food",
+            attributes: ["name"],
+          },
+        ],
+      });
 
+      if (!orderDetail) {
+        return resolve({ err: 1, msg: "Món ăn không tồn tại!" });
+      }
+
+      // Cập nhật trạng thái món ăn
       orderDetail.status = status;
       await orderDetail.save();
+
+      // Lấy thông tin bàn và sảnh từ Order
+      const tableNumber = orderDetail.order?.table?.tableNumber || "N/A";
+      const hallName = orderDetail.order?.table?.hall?.name || "N/A";
+      const foodName = orderDetail.food?.name || "N/A";
+
+      // Gửi thông báo khi món ăn hoàn thành
+      switch (status) {
+        case "complete":
+          await sendNotification(
+            "employee",
+            "Cập nhật món!",
+            `Món ${foodName} của bàn ${tableNumber} - ${hallName} đã chế biến xong`
+          );
+          break;
+
+        case "served":
+          await sendNotification(
+            "chef",
+            "Cập nhật món!",
+            `Món ${foodName} của bàn ${tableNumber} - ${hallName} đã phục vụ`
+          );
+          break;
+        default:
+          break;
+      }
 
       resolve({
         err: 0,
@@ -190,15 +265,57 @@ export const updateFoodStatusService = ({ orderDetailID, status }) =>
       reject(error);
     }
   });
+
 // Update order status
-export const updateOrderStatusService = ({ orderID, status }) =>
+export const updateOrderStatusService = ({ orderID, status, employeeID }) =>
   new Promise(async (resolve, reject) => {
     try {
-      const order = await db.Order.findByPk(orderID);
+      const order = await db.Order.findByPk(orderID, {
+        include: [
+          {
+            model: db.Table,
+            as: "table",
+            attributes: ["tableNumber"],
+            include: [
+              {
+                model: db.Hall,
+                as: "hall",
+                attributes: ["name"],
+              },
+            ],
+          },
+        ],
+      });
       if (!order) return resolve({ err: 1, msg: "Đơn hàng không tồn tại!" });
 
       order.status = status;
+      if (status === "paid" && employeeID) {
+        order.employeeID = employeeID;
+      }
+
       await order.save();
+
+      //xử lý thông báo nhân viên gửi đơn cho bếp
+      const tableNumber = order.table?.tableNumber || "N/A";
+      const hallName = order.table?.hall?.name || "N/A";
+
+      switch (status) {
+        case "preparing":
+          await sendNotification(
+            "chef",
+            "Nhân viên gửi đơn",
+            `Bàn ${tableNumber} - ${hallName} vừa gọi món, vui lòng chuẩn bị.`
+          );
+          break;
+        case "paying":
+          await sendNotification(
+            "employee",
+            "Nhân viên gửi đơn",
+            `Bàn ${tableNumber} - ${hallName} đang gọi thanh toán!`
+          );
+        default:
+          break;
+      }
 
       resolve({
         err: 0,
@@ -214,29 +331,29 @@ export const getAllOrderService = () =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await db.Order.findAll({
-        attributes: ["id", "voucherID", "status", "total", "createdAt"], 
+        attributes: ["id", "voucherID", "status", "total", "createdAt"],
         include: [
           {
             model: db.Customer,
             as: "customer",
-            attributes: ["id","customerName"], 
+            attributes: ["id", "customerName"],
           },
           {
             model: db.Table,
             as: "table",
-            attributes: ["id","tableNumber"], 
+            attributes: ["id", "tableNumber"],
             include: [
               {
                 model: db.Hall,
                 as: "hall",
-                attributes: ["name"], 
+                attributes: ["name"],
               },
             ],
           },
           {
             model: db.OrderDetail,
             as: "orderDetails",
-            attributes: ["id","quantity", "totalPrice", "status"],
+            attributes: ["id", "quantity", "totalPrice", "status"],
             include: [
               {
                 model: db.Food,

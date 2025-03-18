@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../store/actions";
 import { TableCard } from "../../components";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { colors } from "../../constants/colors";
 import { tableStyles } from "../../assets/styles";
-
 
 const Table = () => {
   const dispatch = useDispatch();
@@ -17,6 +16,30 @@ const Table = () => {
     dispatch(actions.getAllTable());
     dispatch(actions.getAllHall());
   }, [dispatch, tables]);
+
+  //nhân viên giải quyết yêu cầu của khách
+  const handleTable = (id) => {
+    Alert.alert(
+      "Xác nhận",
+      "Bạn đã giải quyết xong yêu cầu của khách hàng chưa?",
+      [
+        {
+          text: "Chưa",
+          onPress: () => console.log("Chưa giải quyết"),
+          style: "cancel",
+        },
+        {
+          text: "Đã xong",
+          onPress: () => {
+            const updatedTable = tables.find((table) => table.id === id);
+            updatedTable.status = "Đầy";
+            dispatch(actions.updateTable(id, { status: "Đầy" }));
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   return (
     <View style={tableStyles.container}>
@@ -55,7 +78,7 @@ const Table = () => {
               .sort((a, b) => a.tableNumber - b.tableNumber)}
             keyExtractor={(item) => item.id.toString()}
             numColumns={3}
-            renderItem={({ item }) => <TableCard table={item} />}
+            renderItem={({ item }) => <TableCard table={item} onPress={() => handleTable(item.id)} />}
             contentContainerStyle={tableStyles.listContainer}
           />
         </>

@@ -22,6 +22,22 @@ const tableReducer = (state = initialState, action) => {
         halls: action.data || [],
         msg: action.msg || "",
       };
+    case actionTypes.UPDATE_TABLE_SUCCESS:
+      if (!action.data || !action.data.id) {
+        return state;
+      }
+      return {
+        ...state,
+        tables: state.tables.map((table) =>
+          table.id === action.data.id ? { ...table, ...action.data } : table
+        ),
+        msg: action.msg || "Cập nhật thông tin bàn thành công!",
+      };
+    case actionTypes.UPDATE_TABLE_FAIL:
+      return {
+        ...state,
+        msg: action.msg,
+      };
     default:
       return state;
   }

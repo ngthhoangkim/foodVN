@@ -74,27 +74,28 @@ const HomePage = () => {
     };
 
     try {
-      dispatch(createOrder(payload));
+      // Chờ tạo đơn hàng xong
+      const response = await dispatch(createOrder(payload));
 
-      Swal.fire({
-        icon: "success",
-        title: "Thành công!",
-        text: "Mời bạn xem qua menu",
-        confirmButtonText: "Xem menu",
-        showCancelButton: true,
-        cancelButtonText: "Hủy",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          navigate(`/${path.MENU}`);
-        }
-      });
+      if (response?.err === 0) {
+        Swal.fire({
+          icon: "success",
+          title: "Thành công!",
+          text: "Mời bạn xem qua menu",
+          confirmButtonText: "Xem menu",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate(`/${path.MENU}`);
+          }
+        });
 
-      setShowOrderForm(false);
-      setNumberTable("");
+        setShowOrderForm(false);
+        setNumberTable("");
+      }
     } catch (error) {
       Swal.fire({
-        icon: "error",
-        title: "Lỗi!",
+        icon: "warning",
+        title: "Thông báo!",
         text: error.message || "Có lỗi xảy ra khi tạo đơn hàng.",
         confirmButtonText: "OK",
       });

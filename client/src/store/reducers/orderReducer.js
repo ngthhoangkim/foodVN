@@ -38,7 +38,22 @@ const orderReducer = (state = initialState, action) => {
         order: state.order || null,
         msg: action.msg,
       };
+    case actionTypes.UPDATE_STATUS_ORDER_SUCCESS:
+      return {
+        ...state,
+        order: state.order.map((order) =>
+          order.id === action.data.id
+            ? { ...order, status: action.data.status }
+            : order
+        ),
+        msg: action.msg || "Cập nhật trạng thái đơn hàng thành công!",
+      };
 
+    case actionTypes.UPDATE_STATUS_ORDER_FAIL:
+      return {
+        ...state,
+        msg: action.msg || "Cập nhật thất bại, vui lòng thử lại sau!",
+      };
     // case actionTypes.CANCEL_ORDER_SUCCESS:
     //   return {
     //     ...state,

@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "orderID",
         as: "notifies",
       });
+      Order.belongsTo(models.Employee, {
+        foreignKey: "employeeID",
+        as: "employee",
+      });
     }
   }
   Order.init(
@@ -32,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       tableID: DataTypes.INTEGER,
       status: DataTypes.STRING,
       total: DataTypes.DECIMAL(10, 2),
+      employeeID: DataTypes.INTEGER,
     },
     {
       sequelize,

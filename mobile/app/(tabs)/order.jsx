@@ -9,13 +9,14 @@ import { colors } from "../../constants/colors";
 const Order = () => {
   const dispatch = useDispatch();
   const { order } = useSelector((state) => state.order || { order: [] });
-  const { role } = useSelector((state) => state.auth);
+  const { role, id } = useSelector((state) => state.auth);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     dispatch(getAllOrder());
   }, [dispatch, order]);
 
+  //nhân viên gửi đơn cho bếp
   const handleSendAllToKitchen = async (orderId, orderDetails) => {
     const hasPendingFood = orderDetails.some((item) => item.status === "pending");
 
@@ -25,7 +26,6 @@ const Order = () => {
     }
 
     try {
-      // Cập nhật state cục bộ để ẩn button ngay lập tức
       setSelectedOrder((prev) => ({
         ...prev,
         status: "preparing",
@@ -39,8 +39,8 @@ const Order = () => {
     }
   };
 
-
-  const handleUpdateDishStatus = (orderDetailID, currentStatus, role, orderId) => {
+  //nhân viên cập nhật món ăn
+  const handleUpdateDishStatus = (orderDetailID, currentStatus, role) => {
     let newStatus = currentStatus;
     let confirmMessage = "";
 
@@ -55,7 +55,6 @@ const Order = () => {
       return;
     }
 
-
     Alert.alert(
       "Xác nhận",
       confirmMessage,
@@ -63,15 +62,62 @@ const Order = () => {
         { text: "Hủy", style: "cancel" },
         {
           text: "Đồng ý",
-          onPress: () => {
-            dispatch(updateFoodStatus({ orderDetailID, status: newStatus }));
-            alert("Trạng thái món ăn đã được cập nhật!");
+          onPress: async () => {
+            try {
+              dispatch(updateFoodStatus({ orderDetailID, status: newStatus }));
+              setSelectedOrder((prevOrder) => {
+                if (!prevOrder) return null;
+                return {
+                  ...prevOrder,
+                  orderDetails: prevOrder.orderDetails.map((item) =>
+                    item.id === orderDetailID ? { ...item, status: newStatus } : item
+                  ),
+                };
+              });
+
+              alert("Trạng thái món ăn đã được cập nhật!");
+            } catch (error) {
+              alert("Lỗi khi cập nhật trạng thái món ăn: " + error.message);
+            }
           },
         },
       ],
       { cancelable: false }
     );
   };
+
+  //xử lý thanh toán 
+  const handleConfirmPayment = (orderId) => {
+    Alert.alert(
+      "Xác nhận thanh toán",
+      "Bạn có chắc chắn đã hoàn tất thanh toán cho đơn này không?",
+      [
+        { text: "Hủy", style: "cancel" },
+        {
+          text: "Đồng ý",
+          onPress: async () => {
+            try {
+              dispatch(updateOrderStatus({
+                orderID: orderId,
+                status: "paid",
+                employeeID: id,
+              }));
+
+              setSelectedOrder((prev) => ({
+                ...prev,
+                status: "paid",
+              }));
+              alert("Đơn hàng đã được xác nhận thanh toán!");
+            } catch (error) {
+              alert("Lỗi khi xác nhận thanh toán: " + error.message);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
 
   return (
     <View style={orderStyles.container}>
@@ -86,7 +132,7 @@ const Order = () => {
           </View>
 
           <FlatList
-            data={order}
+            data={order.filter((item) => item.status !== "paid")}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => {
               const totalDishes = item.orderDetails.length;
@@ -94,20 +140,33 @@ const Order = () => {
 
               return (
                 <View style={orderStyles.tableRow}>
-                  <Text style={orderStyles.cell}>{item.table.hall.name}-{item.table.tableNumber}</Text>
+                  <Text style={orderStyles.cell}>
+                    {item.table.hall.name}-{item.table.tableNumber}
+                  </Text>
                   <Text
                     style={[
                       orderStyles.cell,
-                      item.status === "pending" ? orderStyles.pending : orderStyles.completed,
+                      item.status === "pending" ? orderStyles.pending : item.status === "paying" ? orderStyles.paying : orderStyles.completed,
                     ]}
                   >
-                    {item.status === "pending" ? "Đang gọi món" : "Đang phục vụ"}
+                    {item.status === "pending"
+                      ? "Đang gọi món"
+                      : item.status === "paying"
+                        ? "Đang thanh toán"
+                        : "Đang phục vụ"}
                   </Text>
                   <Text style={orderStyles.cell}>
                     {servedDishes}/{totalDishes}
                   </Text>
-                  <Pressable style={orderStyles.button} onPress={() => setSelectedOrder(item)}>
-                    <Text style={orderStyles.buttonText}>Chi tiết đơn</Text>
+                  <Pressable
+                    style={orderStyles.button}
+                    onPress={() => {
+                      setSelectedOrder(item);
+                    }}
+                  >
+                    <Text style={orderStyles.buttonText}>
+                      {item.status === "paying" && role === "employee" ? "Xác nhận thanh toán" : "Chi tiết đơn"}
+                    </Text>
                   </Pressable>
                 </View>
               );
@@ -127,10 +186,17 @@ const Order = () => {
           <Text style={orderDetailStyles.info}>
             Bàn {selectedOrder?.table?.tableNumber} - {selectedOrder.table.hall?.name}
           </Text>
-          <Text style={orderDetailStyles.info}>Trạng thái đơn: {selectedOrder.status === "pending" ? "Đang gọi món" : "Đang phục vụ"}</Text>
+          <Text style={orderDetailStyles.info}>
+            Trạng thái đơn:{" "}
+            {selectedOrder.status === "pending"
+              ? "Đang gọi món"
+              : selectedOrder.status === "paying"
+                ? "Đang thanh toán"
+                : "Đang phục vụ"}
+          </Text>
 
-          {/*Gửi đơn cho bếp*/}
-          {selectedOrder.status === "pending" && role !== 'chef' && (
+          {/* Gửi đơn cho bếp */}
+          {selectedOrder.status === "pending" && role !== "chef" && (
             <Pressable
               onPress={() => handleSendAllToKitchen(selectedOrder.id, selectedOrder.orderDetails)}
               style={({ pressed }) => [
@@ -151,6 +217,28 @@ const Order = () => {
             </Pressable>
           )}
 
+          {/* Xác nhận thanh toán */}
+          {selectedOrder.status === "paying" && role === "employee" && (
+            <Pressable
+              onPress={() => handleConfirmPayment(selectedOrder.id)}
+              style={({ pressed }) => [
+                orderDetailStyles.buttonSend,
+                pressed && orderDetailStyles.buttonPressed,
+              ]}
+            >
+              {({ pressed }) => (
+                <Text
+                  style={[
+                    orderDetailStyles.buttonSendTxt,
+                    pressed && orderDetailStyles.buttonPressed,
+                  ]}
+                >
+                  Xác nhận thanh toán
+                </Text>
+              )}
+            </Pressable>
+          )}
+
           {/* Bảng theo dõi trạng thái món ăn */}
           <View style={orderDetailStyles.tableHeader}>
             <Text style={[orderDetailStyles.headerCell, { width: "40%" }]}>Tên món</Text>
@@ -159,7 +247,11 @@ const Order = () => {
           </View>
 
           <FlatList
-            data={selectedOrder.orderDetails}
+            data={
+              role === "chef" && selectedOrder.status !== "preparing"
+                ? [] // Nếu là đầu bếp nhưng đơn chưa "preparing", không hiển thị món
+                : selectedOrder.orderDetails
+            }
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <View style={orderDetailStyles.tableRow}>
@@ -180,6 +272,7 @@ const Order = () => {
                         item.status === "served" && orderDetailStyles.buttonCompleted,
                       ]}
                       onPress={() => handleUpdateDishStatus(item.id, item.status, role)}
+                      disabled={role === "chef" && selectedOrder.status !== "preparing"} // Vô hiệu hóa nút khi chef chưa được phép
                     >
                       <Text style={orderDetailStyles.buttonCompletedText}>
                         {item.status === "pending"
@@ -206,6 +299,7 @@ const Order = () => {
       )}
     </View>
   );
+
 };
 
 export default Order;

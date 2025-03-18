@@ -42,7 +42,7 @@ export const registerService = ({ email, name, phone, password, birthday }) =>
     }
   });
 // login
-export const loginService = async ({ phone, password }) => {
+export const loginService = async ({ phone, password,fcmToken }) => {
   try {
     // Tìm kiếm trong bảng Customer
     let response = await db.Customer.findOne({
@@ -76,6 +76,13 @@ export const loginService = async ({ phone, password }) => {
       return { err: 2, msg: "Bạn nhập sai mật khẩu. Hãy nhập lại nhé!" };
     }
 
+    //nhận token thông báo
+    if (userType === "employee" && fcmToken) {
+      await db.Employee.update(
+        { fcmToken },
+        { where: { id: response.id } }
+      );
+    }
     // Tạo token
     const token = jwt.sign(
       {
@@ -97,6 +104,7 @@ export const loginService = async ({ phone, password }) => {
       userType,
       role: response.role.roleName,
       id: response.id, 
+      fcmToken: fcmToken,
     };
   } catch (error) {
     throw new Error(error.message);

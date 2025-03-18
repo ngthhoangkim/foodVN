@@ -24,7 +24,7 @@ export const apiUpdateStatusOrder = (payload) =>
       });
       resolve(response);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       reject(error);
     }
   });
@@ -32,16 +32,14 @@ export const apiUpdateStatusOrder = (payload) =>
 export const apiUpdateStatusFood = (payload) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log(payload)
       const response = await axiosConfig({
         method: "PUT",
         url: "/api/order/update-food-status",
         data: payload,
       });
-      console.log(response.data)
       resolve(response);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       reject(error);
     }
   });

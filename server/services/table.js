@@ -1,6 +1,8 @@
 import db from "../models";
-const cloudinary = require('../config/cloudinary.config');
+const cloudinary = require("../config/cloudinary.config");
 import QRCode from "qrcode";
+import { sendNotification } from "./notification";
+const admin = require("../config/firebaseConfig");
 
 // Create table
 export const createTableService = ({
@@ -34,7 +36,7 @@ export const createTableService = ({
         return resolve({ err: 1, msg: "Bàn đã tồn tại!" });
       }
 
-      // Tạo QR Code 
+      // Tạo QR Code
       const qrData = `${tableNumber}`;
       const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
@@ -102,20 +104,22 @@ export const updateTableService = (
 ) =>
   new Promise(async (resolve, reject) => {
     try {
-      const table = await db.Table.findOne({
-        where: { id: tableID },
-      });
+      const table = await db.Table.findOne({ where: { id: tableID } });
+
       if (!table) {
-        resolve({
+        return resolve({
           err: 1,
           msg: "Bàn không tồn tại!",
         });
       }
-      await table.update({
-        tableNumber: tableNumber,
-        maxQuantity: maxQuantity,
-        status: status,
-      });
+      const hall = await db.Hall.findOne({ where: { id: table.hallID } });
+      await table.update({ tableNumber, maxQuantity, status });
+
+      // Gửi thông báo nếu khách gọi phục vụ
+      if (status === "Gọi phục vụ") {
+        const notifyResult = await sendNotification("employee", "Yêu cầu phục vụ", `Bàn ${table.tableNumber} - ${hall.name} đang cần phục vụ.`);
+        if (notifyResult.err) return reject(notifyResult);
+      }
       resolve({
         err: 0,
         msg: "Cập nhật thông tin bàn thành công!",

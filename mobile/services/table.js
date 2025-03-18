@@ -26,3 +26,17 @@ export const apiGetAllHall = () =>
       reject(error);
     }
   });
+//update
+export const apiUpdateTable = (id, payload) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axiosConfig({
+        method: "PUT",
+        url: `/api/table/${id}`,
+        data: payload,
+      });
+      resolve(response);
+    } catch (error) {
+      reject(error);
+    }
+  });

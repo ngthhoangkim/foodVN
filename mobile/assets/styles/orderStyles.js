@@ -49,6 +49,10 @@ export const orderStyles = StyleSheet.create({
     color: colors.greenDark,
     fontWeight: "bold",
   },
+  paying:{
+    color: colors.greenDark,
+    fontWeight: "bold",
+  },
   button: {
     padding: 5,
     borderRadius: 5,

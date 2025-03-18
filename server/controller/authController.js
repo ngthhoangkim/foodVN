@@ -15,16 +15,17 @@ export const register = async (req, res) => {
 };
 // login for customer
 export const login = async (req, res) => {
-  const { password,phone } = req.body
-  try {
-    if ( !password || !phone ) {
-      return res.status(400).json({ message: "Vui lòng nhập đủ thông tin!" })
-    }
-    const response = await authServices.loginService(req.body)
-    return res.status(201).json(response)
+  const { phone, password, fcmToken } = req.body;
 
+  try {
+    if (!phone || !password) {
+      return res.status(400).json({ message: "Vui lòng nhập đủ thông tin!" });
+    }
+
+    const response = await authServices.loginService({ phone, password, fcmToken });
+
+    return res.status(201).json(response);
   } catch (error) {
     res.status(500).json({ ["Fail at auth:"]: error.message });
   }
 };
-

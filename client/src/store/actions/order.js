@@ -1,4 +1,4 @@
-import { apiCreateOrder, apiGetOrder, apiUpdateOrder } from "../../services/order";
+import { apiCreateOrder, apiGetOrder, apiUpdateOrder, apiUpdateStatusOrder } from "../../services/order";
 import actionTypes from "./actionTypes";
 
 //create order
@@ -75,6 +75,35 @@ export const updateOrder = (customerID) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: actionTypes.UPDATE_ORDER_FAIL,
+      msg: "Cập nhật thất bại, vui lòng thử lại sau!",
+    });
+
+    return Promise.reject(
+      new Error("Cập nhật thất bại, vui lòng thử lại sau!")
+    );
+  }
+};
+//update order status
+export const updateOrderStatus = (payload) => async (dispatch) => {
+  try {
+    const response = await apiUpdateStatusOrder(payload);
+    if (response.data.err === 0) {
+      dispatch({
+        type: actionTypes.UPDATE_STATUS_ORDER_SUCCESS,
+        data: response.data.data,
+        msg: response.data.msg || "Cập nhật đơn hàng thành công!",
+      });
+      return Promise.resolve(response.data);
+    } else {
+      dispatch({
+        type: actionTypes.UPDATE_STATUS_ORDER_FAIL,
+        msg: response.data.msg || "Cập nhật thất bại, vui lòng thử lại sau!",
+      });
+      return Promise.reject(new Error(response.data.msg));
+    }
+  } catch (error) {
+    dispatch({
+      type: actionTypes.UPDATE_STATUS_ORDER_FAIL,
       msg: "Cập nhật thất bại, vui lòng thử lại sau!",
     });
 

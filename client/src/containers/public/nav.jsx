@@ -1,12 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useCallback, useEffect } from "react";
-import { CiShoppingCart, CiUser,CiViewList  } from "react-icons/ci";
+import { CiShoppingCart, CiUser, CiViewList } from "react-icons/ci";
 import { IoIosLogOut } from "react-icons/io";
 import { path } from "../../ultils/constant";
 import Button from "../../components/button";
 import { useSelector, useDispatch } from 'react-redux';
 import { motion } from "framer-motion";
 import * as actions from '../../store/actions';
+import Swal from "sweetalert2";
 
 const Nav = () => {
   const navigate = useNavigate();
@@ -30,6 +31,29 @@ const Nav = () => {
     }
   }, [id, dispatch]);
 
+  //gọi phục vụ
+  const handleCallService = () => {
+    Swal.fire({
+      title: "Bạn muốn gọi phục vụ sao?",
+      text: `Bàn ${order.table.tableNumber}`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Gọi phục vụ",
+      cancelButtonText: "Hủy",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const payload = {status: "Gọi phục vụ"}
+        dispatch(actions.updateTable(order.table.id,payload))
+        .then(()=>{
+          Swal.fire("Bạn đợi chút phục vụ đang đến!", "", "success");
+        })
+        .catch(()=>{
+          Swal.fire("Gọi không thành công!", "", "error");
+        })
+      }
+    });
+
+  };
   return (
     <nav className="bg-gradientPrimary relative px-4 py-4 flex justify-between items-center">
       {/* logo */}
@@ -45,20 +69,21 @@ const Nav = () => {
       </ul>
 
       <div className="flex space-x-6 items-center">
-        {isLoggedIn && order?.table?.tableNumber && (
-          <motion.div
+        {isLoggedIn && order?.table?.tableNumber && order?.status !== 'call' && (
+          <motion.button
+            onClick={handleCallService}
             className="relative overflow-hidden border-2 border-primary text-txtCard py-2 px-6 rounded-lg font-semibold text-sm transition-all duration-300 group"
           >
             <span className="relative z-10 group-hover:text-txtCard">
               Gọi phục vụ bàn {order.table.tableNumber}
             </span>
             <span className="absolute inset-0 bg-primary scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
-          </motion.div>
+          </motion.button>
         )}
 
         {isLoggedIn ? (
           <>
-          {/* đơn hàng */}
+            {/* đơn hàng */}
             <div className="relative flex items-center space-x-2">
               <Link to={`/${path.ORDER}`} className="text-txtCard hover:text-accent2">
                 <CiViewList className="text-3xl" />

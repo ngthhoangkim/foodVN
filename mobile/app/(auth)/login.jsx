@@ -6,7 +6,7 @@ import { Feather } from "@expo/vector-icons";
 import * as actions from "../../store/actions";
 import { colors } from "../../constants/colors";
 import { loginStyles } from "../../assets/styles";
-
+import messaging from "@react-native-firebase/messaging";
 
 const Login = () => {
   const router = useRouter();
@@ -17,10 +17,29 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [fcmToken, setFcmToken] = useState("");
 
-  const handleLogin = () => {
+  //lấy tokentoken
+  useEffect(() => {
+    const fetchFcmToken = async () => {
+      try {
+        const token = await messaging().getToken();
+        setFcmToken(token); 
+      } catch (error) {
+        console.error("Lỗi lấy FCM token:", error);
+      }
+    };
+    fetchFcmToken();
+  }, []);
+
+  //đăng nhập
+  const handleLogin = async () => {
     setLoading(true);
-    dispatch(actions.login({ phone, password }));
+    try {
+      dispatch(actions.login({ phone, password, fcmToken }));
+    } catch (error) {
+      console.error("Lỗi khi gửi login request:", error);
+    }
     setLoading(false);
   };
 
