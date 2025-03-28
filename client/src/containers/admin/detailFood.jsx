@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createFood, deleteFood, getAllFood, updateFood } from "../../store/actions/food";
 import Swal from 'sweetalert2'
 import { getAllCategory } from "../../store/actions";
+import { GrFormNextLink, GrFormPreviousLink } from "react-icons/gr";
 
 const DetailFood = () => {
   const [isAddPopupVisible, setIsAddPopupVisible] = useState(false);
@@ -169,30 +170,19 @@ const DetailFood = () => {
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-6">
           <button
-            className="px-4 py-2 mx-1 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+             className={`px-3 py-1 rounded-full mx-1 ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "bg-primary text-white"}`}
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
           >
-            &lt;
+            <GrFormPreviousLink size={24} />
           </button>
-
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              className={`px-4 py-2 mx-1 border rounded-lg ${currentPage === i + 1 ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"
-                }`}
-              onClick={() => handlePageChange(i + 1)}
-            >
-              {i + 1}
-            </button>
-          ))}
-
+          <span className="mx-2 text-primary">Trang {currentPage} / {totalPages}</span>
           <button
-            className="px-4 py-2 mx-1 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+           className={`px-3 py-1 mx-1 rounded-full ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "bg-primary text-white"}`}
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            &gt;
+            <GrFormNextLink size={24} />
           </button>
         </div>
       )}

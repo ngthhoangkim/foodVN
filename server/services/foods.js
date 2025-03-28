@@ -63,7 +63,6 @@ export const getAllFoodService = () =>
       reject(error);
     }
   });
-
 // Lấy một món ăn theo ID
 export const getFoodByIdService = (id) =>
   new Promise(async (resolve, reject) => {

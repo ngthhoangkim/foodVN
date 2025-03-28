@@ -2,8 +2,8 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { path } from "./ultils/constant";
 import "./css/App.css";
-import { FoodDetail, Home, HomePage, Login, Menu, Order, Profile, ShoppingCart } from "./containers/public";
-import { Admin, AdminHome, ChefStaff, Customer, DetailFood, Food, OrderStaff, Table } from "./containers/admin";
+import { FoodDetail, Home, HomePage, Login, Menu, Order, Profile, Review, ShoppingCart } from "./containers/public";
+import { Admin, AdminHome, ChefStaff, Customer, DetailFood, Food, OrderAdmin, OrderStaff, Table } from "./containers/admin";
 
 
 function App() {
@@ -19,6 +19,7 @@ function App() {
           <Route path={path.MENU} element={<Menu />} />
           <Route path={path.DETAIL} element={<FoodDetail />} />
           <Route path={path.ORDER} element={<Order/>} />
+          <Route path={path.REVIEW} element={<Review/>} />
         </Route>
         {/* các trang dành cho admin */}
         <Route path={path.ADMIN} element={<Admin />}>
@@ -29,6 +30,7 @@ function App() {
           <Route path={path.ADMIN_CHEF} element={<ChefStaff />} />
           <Route path={path.ADMIN_TABLE} element={<Table />} />
           <Route path={path.DETAIL_FOOD} element={<DetailFood />} />
+          <Route path={path.ADMIN_ORDER} element={<OrderAdmin/>} />
         </Route>
       </Routes>
     </div>

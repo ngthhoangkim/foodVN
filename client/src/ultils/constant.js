@@ -8,7 +8,7 @@ export const path = {
     MENU: "menu",
     ADMIN: "admin/*",
     HOME_ADMIN: "admin/:page",
-    ADMIN_ORDER: "order",
+    ADMIN_ORDER: "admin-order",
     ADMIN_FOOD: "food",
     ADMIN_CUSTOMER: "customer",
     ADMIN_EMPLOYEE: "employee",
@@ -16,5 +16,6 @@ export const path = {
     ADMIN_TABLE : "table",
     DETAIL_FOOD : "detail-food/:categoryName",
     DETAIL : "detail/:foodID",
-    ORDER: "order"
+    ORDER: "order",
+    REVIEW: "review",
 };

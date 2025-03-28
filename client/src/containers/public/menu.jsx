@@ -63,7 +63,7 @@ const Menu = () => {
   };
 
   return (
-    <div className="w-full p-6 mt-28 flex gap-6">
+    <div className="w-full p-6 mt-20 flex gap-6">
       {/* Sidebar chọn danh mục */}
       <div className="w-1/4 bg-grayDark p-4 rounded-lg flex flex-col items-center">
         <label className="block mb-4 text-xl font-bold text-center">Chọn danh mục:</label>

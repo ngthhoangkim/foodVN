@@ -6,7 +6,6 @@ import { MdAddBox } from "react-icons/md";
 import { createCategory, deleteCategory, getAllCategory, updateCategory } from "../../store/actions";
 import { useNavigate } from "react-router-dom";
 import { path } from "../../ultils/constant";
-import { GrFormNextLink, GrFormPreviousLink } from "react-icons/gr";
 
 const Food = () => {
     const [isAddPopupVisible, setIsAddPopupVisible] = useState(false);

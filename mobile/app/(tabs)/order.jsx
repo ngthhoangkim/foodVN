@@ -14,7 +14,7 @@ const Order = () => {
 
   useEffect(() => {
     dispatch(getAllOrder());
-  }, [dispatch, order]);
+  }, [dispatch,order]);
 
   //nhân viên gửi đơn cho bếp
   const handleSendAllToKitchen = async (orderId, orderDetails) => {

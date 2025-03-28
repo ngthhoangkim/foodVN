@@ -3,7 +3,6 @@ import React, { useCallback, useEffect } from "react";
 import { CiShoppingCart, CiUser, CiViewList } from "react-icons/ci";
 import { IoIosLogOut } from "react-icons/io";
 import { path } from "../../ultils/constant";
-import Button from "../../components/button";
 import { useSelector, useDispatch } from 'react-redux';
 import { motion } from "framer-motion";
 import * as actions from '../../store/actions';
@@ -14,7 +13,11 @@ const Nav = () => {
   const dispatch = useDispatch();
   const { isLoggedIn, id } = useSelector(state => state.auth);
   const { count } = useSelector((state) => state.cart || {});
-  const { order } = useSelector((state) => state.order);
+  const { order = [] } = useSelector((state) => state.order || { order: [] });
+
+  //lọc đơn
+  const activeOrder = order.find(o => o.status === "pending");
+
 
   const goLogin = useCallback((flag) => {
     navigate(`/${path.LOGIN}`, { state: { flag } });
@@ -33,27 +36,29 @@ const Nav = () => {
 
   //gọi phục vụ
   const handleCallService = () => {
+    if (!activeOrder || !activeOrder.table) return;
+
     Swal.fire({
       title: "Bạn muốn gọi phục vụ sao?",
-      text: `Bàn ${order.table.tableNumber}`,
+      text: `Bàn ${activeOrder.table.tableNumber}`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Gọi phục vụ",
       cancelButtonText: "Hủy",
     }).then((result) => {
       if (result.isConfirmed) {
-        const payload = {status: "Gọi phục vụ"}
-        dispatch(actions.updateTable(order.table.id,payload))
-        .then(()=>{
-          Swal.fire("Bạn đợi chút phục vụ đang đến!", "", "success");
-        })
-        .catch(()=>{
-          Swal.fire("Gọi không thành công!", "", "error");
-        })
+        const payload = { status: "Gọi phục vụ" };
+        dispatch(actions.updateTable(activeOrder.table.id, payload))
+          .then(() => {
+            Swal.fire("Bạn đợi chút, phục vụ đang đến!", "", "success");
+          })
+          .catch(() => {
+            Swal.fire("Gọi không thành công!", "", "error");
+          });
       }
     });
-
   };
+
   return (
     <nav className="bg-gradientPrimary relative px-4 py-4 flex justify-between items-center">
       {/* logo */}
@@ -69,18 +74,17 @@ const Nav = () => {
       </ul>
 
       <div className="flex space-x-6 items-center">
-        {isLoggedIn && order?.table?.tableNumber && order?.status !== 'call' && (
+        {isLoggedIn && activeOrder?.table?.tableNumber && activeOrder?.table?.status !== 'Gọi phục vụ' && activeOrder?.status !== 'paid' && (
           <motion.button
             onClick={handleCallService}
             className="relative overflow-hidden border-2 border-primary text-txtCard py-2 px-6 rounded-lg font-semibold text-sm transition-all duration-300 group"
           >
             <span className="relative z-10 group-hover:text-txtCard">
-              Gọi phục vụ bàn {order.table.tableNumber}
+              Gọi phục vụ bàn {activeOrder.table.tableNumber}
             </span>
             <span className="absolute inset-0 bg-primary scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
           </motion.button>
         )}
-
         {isLoggedIn ? (
           <>
             {/* đơn hàng */}
@@ -112,8 +116,24 @@ const Nav = () => {
           </>
         ) : (
           <div className="flex items-center gap-3">
-            <Button text="Đăng nhập" textColor="text-white" bgColor="bg-accent2" onClick={() => goLogin(false)} />
-            <Button text="Đăng ký" textColor="text-white" bgColor="bg-accent2" onClick={() => goLogin(true)} />
+            <motion.button
+              className="relative overflow-hidden border-2 border-primary text-txtCard py-2 px-6 rounded-lg font-semibold text-sm transition-all duration-300 group"
+              onClick={() => goLogin(false)}
+            >
+              <span className="relative z-10 group-hover:text-txtCard">
+                Đăng nhập
+              </span>
+              <span className="absolute inset-0 bg-primary scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
+            </motion.button>
+            <motion.button
+              className="relative overflow-hidden border-2 border-primary text-txtCard py-2 px-6 rounded-lg font-semibold text-sm transition-all duration-300 group"
+              onClick={() => goLogin(true)}
+            >
+              <span className="relative z-10 group-hover:text-txtCard">
+                Đăng ký
+              </span>
+              <span className="absolute inset-0 bg-primary scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
+            </motion.button>
           </div>
         )}
       </div>

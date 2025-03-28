@@ -11,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "foodID",
         as: "orderDetails",
       });
+      Food.hasMany(models.Review, {
+        foreignKey: "foodID",
+        as: "reviews",
+      });
+      Food.hasOne(models.BestSeller, {
+        foreignKey: "foodID",
+        as: "bestSeller",
+      });
     }
   }
   Food.init(
@@ -24,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Food",
-      tableName: "foods"
+      tableName: "foods",
     }
   );
   return Food;

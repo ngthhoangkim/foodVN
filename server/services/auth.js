@@ -7,6 +7,59 @@ const hashPassword = (password) => {
   if (!password) throw new Error("Password chưa được truyền vào!");
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 };
+//chuyển đổi định dạng ngày sinh
+const formatBirthdayForDB = (date) => {
+  if (!date) return null;
+
+  // Xử lý ngày có dấu "/"
+  if (date.includes("/")) {
+    const parts = date.split("/");
+    if (parts.length !== 3) return null; // Định dạng không hợp lệ
+
+    let day, month, year;
+
+    if (parts[2].length === 4) {
+      // Giả định định dạng DD/MM/YYYY hoặc MM/DD/YYYY
+      const [part1, part2, part3] = parts;
+      if (part1 > 12) {
+        // Nếu phần đầu > 12 => chắc chắn là DD/MM/YYYY
+        [day, month, year] = [part1, part2, part3];
+      } else {
+        // Không chắc là MM/DD/YYYY hay DD/MM/YYYY -> Kiểm tra ngày hợp lệ
+        const testDate1 = new Date(`${part3}-${part2}-${part1}`);
+        const testDate2 = new Date(`${part3}-${part1}-${part2}`);
+
+        if (!isNaN(testDate1.getTime())) {
+          [day, month, year] = [part1, part2, part3];
+        } else if (!isNaN(testDate2.getTime())) {
+          [day, month, year] = [part2, part1, part3];
+        } else {
+          return null; // Không xác định được định dạng hợp lệ
+        }
+      }
+    } else {
+      return null; // Nếu năm không có 4 chữ số, không hợp lệ
+    }
+
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  }
+
+  // Xử lý ngày có dấu "-"
+  if (date.includes("-")) {
+    const parts = date.split("-");
+    if (parts.length !== 3) return null; // Định dạng không hợp lệ
+
+    let [year, month, day] = parts;
+    if (year.length === 4) {
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    } else {
+      return null; // Nếu năm không có 4 chữ số, không hợp lệ
+    }
+  }
+
+  return null; // Nếu không thuộc định dạng nào hợp lệ
+};
+
 //register for customer
 export const registerService = ({ email, name, phone, password, birthday }) =>
   new Promise(async (resolve, reject) => {
@@ -14,6 +67,7 @@ export const registerService = ({ email, name, phone, password, birthday }) =>
       const customerRole = await db.Role.findOne({
         where: { roleName: "Customer" },
       });
+      const formattedBirthday = formatBirthdayForDB(birthday);
       const response = await db.Customer.findOrCreate({
         where: { customerPhone: phone },
         defaults: {
@@ -21,7 +75,7 @@ export const registerService = ({ email, name, phone, password, birthday }) =>
           password: hashPassword(password),
           customerName: name,
           customerPhone: phone,
-          customerBirthday: birthday,
+          customerBirthday: formattedBirthday,
           roleID: customerRole.id,
         },
       });
@@ -42,7 +96,7 @@ export const registerService = ({ email, name, phone, password, birthday }) =>
     }
   });
 // login
-export const loginService = async ({ phone, password,fcmToken }) => {
+export const loginService = async ({ phone, password, fcmToken }) => {
   try {
     // Tìm kiếm trong bảng Customer
     let response = await db.Customer.findOne({
@@ -67,7 +121,10 @@ export const loginService = async ({ phone, password,fcmToken }) => {
 
     // Nếu vẫn không tìm thấy, trả lỗi
     if (!response) {
-      return { err: 1, msg: "Số điện thoại bạn nhập không tồn tại. Hãy nhập lại!" };
+      return {
+        err: 1,
+        msg: "Số điện thoại bạn nhập không tồn tại. Hãy nhập lại!",
+      };
     }
 
     // Kiểm tra mật khẩu
@@ -78,10 +135,7 @@ export const loginService = async ({ phone, password,fcmToken }) => {
 
     //nhận token thông báo
     if (userType === "employee" && fcmToken) {
-      await db.Employee.update(
-        { fcmToken },
-        { where: { id: response.id } }
-      );
+      await db.Employee.update({ fcmToken }, { where: { id: response.id } });
     }
     // Tạo token
     const token = jwt.sign(
@@ -103,7 +157,7 @@ export const loginService = async ({ phone, password,fcmToken }) => {
       token,
       userType,
       role: response.role.roleName,
-      id: response.id, 
+      id: response.id,
       fcmToken: fcmToken,
     };
   } catch (error) {

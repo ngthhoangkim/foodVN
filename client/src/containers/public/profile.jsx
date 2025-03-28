@@ -29,20 +29,6 @@ const Profile = () => {
     }
   }, [id, dispatch]);
 
-  // Chuyển định dạng ngày sinh
-  const formatBirthday = (date) => {
-    if (!date) return "";
-    const [day, month, year] = date.split("/");
-    if (!day || !month || !year) return ""; 
-    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`; 
-  };
-  const reformatBirthdayForDB = (date) => {
-    if (!date) return "";
-    const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`; // Định dạng DD/MM/YYYY (tùy vào yêu cầu DB)
-  };
-  
-
   // Điền thông tin khách hàng vào form
   useEffect(() => {
     if (customer) {
@@ -50,7 +36,7 @@ const Profile = () => {
         name: customer.customerName || "",
         phone: customer.customerPhone || "",
         email: customer.customerEmail || "",
-        birthday: formatBirthday(customer.customerBirthday) || "",
+        birthday: customer.customerBirthday || "",
         oldPassword: "",
         newPassword: "",
       });
@@ -79,7 +65,7 @@ const Profile = () => {
       name: customerInfo.name,
       phone: customerInfo.phone,
       email: customerInfo.email,
-      birthday: reformatBirthdayForDB(customerInfo.birthday), // Định dạng lại ngày
+      birthday: customerInfo.birthday, 
     };
   
     if (customerInfo.oldPassword && customerInfo.newPassword) {

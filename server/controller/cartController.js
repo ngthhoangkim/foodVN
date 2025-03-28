@@ -54,26 +54,6 @@ export const updateCart = async (req, res) => {
   }
 };         
 //delete all
-export const deleteAllCartService = (customerID) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      await db.Cart.destroy({
-        where: { customerID },
-      });
-
-      return resolve({
-        err: 0,
-        msg: "Xóa tất cả món ăn khỏi giỏ hàng thành công!",
-      });
-    } catch (error) {
-      return reject({
-        err: 1,
-        msg: "Có lỗi xảy ra!",
-        error: error.message,
-      });
-    }
-  });
-//delete all
 export const deleteAllCart = async (req, res) => {
   const { customerID } = req.params;
   try {

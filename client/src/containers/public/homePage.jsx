@@ -48,7 +48,7 @@ const HomePage = () => {
       return;
     }
 
-    if (order && Object.keys(order).length > 0) {
+    if (order && order.length > 0 && order.some(o => o.status === "pending")) {
       navigate(`/${path.MENU}`);
     } else {
       setShowOrderForm(true);
@@ -74,7 +74,7 @@ const HomePage = () => {
     };
 
     try {
-      // Chờ tạo đơn hàng xong
+      // Đợi action hoàn thành
       const response = await dispatch(createOrder(payload));
 
       if (response?.err === 0) {
@@ -91,6 +91,13 @@ const HomePage = () => {
 
         setShowOrderForm(false);
         setNumberTable("");
+      } else {
+        Swal.fire({
+          icon: "warning",
+          title: "Thông báo!",
+          text: response?.message || "Có lỗi xảy ra khi tạo đơn hàng.",
+          confirmButtonText: "OK",
+        });
       }
     } catch (error) {
       Swal.fire({
@@ -160,7 +167,9 @@ const HomePage = () => {
             onClick={handleGoToMenu}
           >
             <span className="relative z-10 group-hover:text-txtCard">
-              {order && Object.keys(order).length > 0 ? "Xem menu" : "Gọi món ngay"}
+              {order && order.length > 0 && order.some(o => o.status === "pending")
+                ? "Xem menu"
+                : "Gọi món ngay"}
             </span>
             <span className="absolute inset-0 bg-gradientPrimary scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
           </motion.button>

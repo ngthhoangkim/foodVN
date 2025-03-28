@@ -42,10 +42,10 @@ export const getOrderController = async (req, res) => {
 };
 //update order
 export const updateOrderController = async (req, res) => {
-  const { customerID } = req.body;
+  const { customerID,orderID } = req.body;
   try {
-    if (!customerID) {
-      return res.status(400).json({ err: 1, msg: "Không có thông tin khách hàng!" });
+    if (!customerID || !orderID) {
+      return res.status(400).json({ err: 1, msg: "Không có thông tin!" });
     }
 
     const response = await orderService.updateOrderService(req.body);

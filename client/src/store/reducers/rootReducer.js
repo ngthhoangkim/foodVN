@@ -11,6 +11,8 @@ import categoryReducer from "./categoryReducer";
 import employeeReducer from "./employeeReducer";
 import cartReducer from "./cartReducer";
 import orderReducer from "./orderReducer";
+import reviewReducer from "./reviewReducer";
+import revenueReducer from "./revenueReducer";
 
 const commonConfig = {
     storage,
@@ -33,7 +35,8 @@ const rootReducer = combineReducers({
     employee : employeeReducer,
     cart: cartReducer,
     order: orderReducer,
-    
+    review: reviewReducer,
+    revenue: revenueReducer,
 });
 
 export default rootReducer;

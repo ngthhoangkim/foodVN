@@ -6,3 +6,5 @@ export * from './category';
 export * from './employee';
 export * from './cart'
 export * from './order'
+export * from './review'
+export * from './revenue'

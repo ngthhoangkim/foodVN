@@ -73,16 +73,23 @@ const Header = ({ name, avatar }) => {
                 <View style={headerStyles.modalContainer}>
                     <View style={headerStyles.modalContent}>
                         <Text style={headerStyles.modalTitle}>Thông báo mới</Text>
-                        <FlatList
-                            data={notifications}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <View style={headerStyles.notificationItem}>
-                                    <Text style={headerStyles.notificationTitle}>{item.title}</Text>
-                                    <Text style={headerStyles.notificationBody}>{item.body}</Text>
-                                </View>
-                            )}
-                        />
+
+                        {/* Bọc danh sách thông báo trong View có flex để tránh che nút đóng */}
+                        <View style={{ flexGrow: 1, maxHeight: 300 }}>
+                            <FlatList
+                                data={notifications}
+                                keyExtractor={(item) => item.id.toString()}
+                                showsVerticalScrollIndicator={false}
+                                renderItem={({ item }) => (
+                                    <View style={headerStyles.notificationItem}>
+                                        <Text style={headerStyles.notificationTitle}>{item.title}</Text>
+                                        <Text style={headerStyles.notificationBody}>{item.body}</Text>
+                                    </View>
+                                )}
+                            />
+                        </View>
+
+                        {/* Nút đóng luôn hiển thị */}
                         <TouchableOpacity onPress={handleClearNotifications} style={headerStyles.closeButton}>
                             <Text style={headerStyles.closeButtonText}>Đóng</Text>
                         </TouchableOpacity>

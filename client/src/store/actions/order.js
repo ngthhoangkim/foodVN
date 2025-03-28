@@ -1,4 +1,4 @@
-import { apiCreateOrder, apiGetOrder, apiUpdateOrder, apiUpdateStatusOrder } from "../../services/order";
+import { apiCreateOrder, apiGetAllOrder, apiGetOrder, apiUpdateOrder, apiUpdateStatusOrder } from "../../services/order";
 import actionTypes from "./actionTypes";
 
 //create order
@@ -35,6 +35,7 @@ export const getOrder = (id) => async (dispatch) => {
         type: actionTypes.GET_ORDER,
         data: response.data.data,
         msg: response.data.msg || "",
+        count: response.data.count
       });
     } else {
       dispatch({
@@ -54,9 +55,10 @@ export const getOrder = (id) => async (dispatch) => {
   }
 };
 //update order
-export const updateOrder = (customerID) => async (dispatch) => {
+export const updateOrder = (customerID,orderID) => async (dispatch) => {
   try {
-    const response = await apiUpdateOrder(customerID);
+    const response = await apiUpdateOrder(customerID,orderID);
+    console.log("API action",response);
     if (response.data.err === 0) {
       dispatch({
         type: actionTypes.UPDATE_ORDER_SUCCESS,
@@ -110,5 +112,41 @@ export const updateOrderStatus = (payload) => async (dispatch) => {
     return Promise.reject(
       new Error("Cập nhật thất bại, vui lòng thử lại sau!")
     );
+  }
+};
+//get all order
+export const getAllOrder = () => async (dispatch) => {
+  try {
+    const response = await apiGetAllOrder();
+    if (response?.data?.err === 0) {
+      dispatch({
+        type: actionTypes.GET_ALL_ORDER,
+        data: response.data.data,
+        msg: response.data.msg || "",
+        count: response.data.count,
+        totalRevenue: response.data.totalRevenue,
+        monthlyRevenue : response.data.monthlyRevenue,
+        yearlyRevenue : response.data.yearlyRevenue,
+        weeklyRevenue : response.data.weeklyRevenue,
+      });
+
+    } else {
+      dispatch({
+        type: actionTypes.GET_ALL_ORDER,
+        data: [],
+        count: 0,
+        msg: response.data.msg || "Lỗi khi lấy danh sách order",
+        totalRevenue: 0,
+        monthlyRevenue : 0,
+        yearlyRevenue : 0
+      });
+    }
+  } catch (error) {
+    dispatch({
+      type: actionTypes.GET_ALL_ORDER,
+      data: [],
+      count: 0,
+      msg: "Có lỗi xảy ra khi lấy danh sách order",
+    });
   }
 };

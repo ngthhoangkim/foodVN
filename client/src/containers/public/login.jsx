@@ -171,7 +171,7 @@ const Login = () => {
             {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
             {/* Form Container */}
-            <div className="flex flex-col items-center justify-center h-screen relative z-10 m-10">
+            <div className="flex flex-col items-center justify-center h-screen relative z-10 w-">
                 <div className="w-full max-w-md bg-grayDark bg-opacity-40 rounded-xl shadow-md py-6 px-6 z-20 max-h-screen">
                     <h2 className="text-[28px] font-bold text-primary mb-4 text-center">
                         {isRegister ? "Đăng ký" : "Đăng nhập"}

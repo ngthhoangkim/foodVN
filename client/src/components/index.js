@@ -1,4 +1,4 @@
-export {default as Button} from './button.jsx';
+export { default as Button} from './button.jsx';
 export { default as DashboardCart } from './dashboardCard.jsx'
 export { default as InputForm } from './inputForm.jsx'
 export { default as Search } from './search.jsx'
@@ -13,3 +13,4 @@ export { default as PopupFood} from './popupFood.jsx'
 export { default as PopupHall} from './popupHall.jsx'
 export { default as MenuCard} from './menuCard.jsx'
 export { default as OrderForm } from './orderForm.jsx'
+export { default as OrderCard } from './orderCard.jsx'

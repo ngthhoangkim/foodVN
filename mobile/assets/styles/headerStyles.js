@@ -36,14 +36,14 @@ export const headerStyles = StyleSheet.create({
     alignItems: "center",
   },
   notificationButton: {
-    padding: 5, 
+    padding: 5,
     borderRadius: 16,
-    marginRight: 8, 
+    marginRight: 8,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
   },
   logoutButton: {
-    padding: 5, 
+    padding: 5,
   },
   badge: {
     position: "absolute",
@@ -72,18 +72,19 @@ export const headerStyles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    width: "85%",
     backgroundColor: "white",
     padding: 16,
     borderRadius: 10,
-    elevation: 5,
+    alignItems: "center",
+    width: "90%",
+    maxHeight: "80%",
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: colors.primary,
     marginBottom: 10,
-    textAlign:"center"
+    textAlign: "center",
   },
   notificationItem: {
     marginBottom: 10,
@@ -108,10 +109,11 @@ export const headerStyles = StyleSheet.create({
   closeButton: {
     marginTop: 10,
     backgroundColor: colors.primary,
-    paddingVertical: 8,
-    borderRadius: 5,
+    paddingVertical: 12,
+    borderRadius: 8,
     alignItems: "center",
-  },
+    width: "100%", 
+},
   closeButtonText: {
     color: "white",
     fontSize: 16,

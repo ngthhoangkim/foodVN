@@ -1,8 +1,13 @@
 import actionTypes from "../actions/actionTypes";
 
 const initialState = {
-  order: null,
+  order: [],
   msg: null,
+  count : 0,
+  totalRevenue: 0,
+  yearlyRevenue: 0,
+  monthlyRevenue: 0,
+  weeklyRevenue: 0,
 };
 
 const orderReducer = (state = initialState, action) => {
@@ -10,9 +15,8 @@ const orderReducer = (state = initialState, action) => {
     case actionTypes.CREATE_ORDER_SUCCESS:
       return {
         ...state,
-        order: action.data,
+        order: Array.isArray(action.data) ? action.data : [],
         msg: action.msg || "Tạo đơn hàng thành công!",
-        isOrder: true,
       };
     case actionTypes.CREATE_ORDER_FAIL:
       return {
@@ -23,13 +27,14 @@ const orderReducer = (state = initialState, action) => {
     case actionTypes.GET_ORDER:
       return {
         ...state,
-        order: action.data,
+        order: Array.isArray(action.data) ? action.data : [],
         msg: action.msg || "Lấy thông tin đơn hàng thành công!",
+        count: action.count
       };
     case actionTypes.UPDATE_ORDER_SUCCESS:
       return {
         ...state,
-        order: action.data,
+        order: Array.isArray(action.data) ? action.data : [],
         msg: action.msg || "Cập nhật thông tin sảnh thành công!",
       };
     case actionTypes.UPDATE_ORDER_FAIL:
@@ -65,6 +70,18 @@ const orderReducer = (state = initialState, action) => {
     //     ...state,
     //     msg: action.msg || "Hủy đơn hàng thất bại!",
     //   };
+    case actionTypes.GET_ALL_ORDER:
+      return {
+        ...state,
+        order: Array.isArray(action.data) ? action.data : [],
+        count: action.count,
+        totalRevenue: action.totalRevenue || 0,
+        yearlyRevenue: action.yearlyRevenue || 0,
+        monthlyRevenue: action.monthlyRevenue || 0,
+        weeklyRevenue: action.weeklyRevenue || 0,
+        msg: action.msg || "Lấy danh sách đơn thành công!",
+      };
+      
     default:
       return state;
   }

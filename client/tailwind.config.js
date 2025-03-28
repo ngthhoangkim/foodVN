@@ -17,9 +17,14 @@ module.exports = {
         yellowDark: "#FFD65A",
         bgWhite: "#F6F8FA",
         grayDark: "#edede9",
+        yellowLight: "#fdd85d",
+        brownLight: "#edc531",
+        brownLight2: "#ffe6a7",
+        brownDark:"#5a1a00"
       },
       backgroundImage: {
         gradientPrimary: "linear-gradient(to bottom right, #FFB330, #FFFCDE)",
+        gradientRed: "linear-gradient(45deg, #ED213A, #93291E)",
       },
     },
   },

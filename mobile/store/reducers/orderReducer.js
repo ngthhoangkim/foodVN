@@ -30,10 +30,8 @@ const orderReducer = (state = initialState, action) => {
     case actionTypes.UPDATE_STATUS_ORDER_SUCCESS:
       return {
         ...state,
-        order: state.order.map((order) =>
-          order.id === action.data.id
-            ? { ...order, status: action.data.status }
-            : order
+        order: state.order.map((o) =>
+          o.id === action.data.id ? { ...o, status: action.data.status } : o
         ),
         msg: action.msg || "Cập nhật trạng thái đơn hàng thành công!",
       };

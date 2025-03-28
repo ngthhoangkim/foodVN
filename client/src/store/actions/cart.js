@@ -1,5 +1,6 @@
 import {
   apiAddCart,
+  apiDeleteAllCart,
   apiDeleteCart,
   apiGetCart,
   apiUpdateCart,
@@ -87,7 +88,29 @@ export const deleteCart =
       });
     }
   };
-
+//delete all cart
+export const deleteAllCart = (customerID) => async (dispatch) => {
+  try {
+    const response = await apiDeleteAllCart(customerID);
+    if (response.data.err === 0) {
+      dispatch({
+        type: actionTypes.DELETE_ALL_CART_SUCCESS,
+        msg: response.data.msg,
+      });
+      dispatch(getCart(customerID))
+    } else {
+      dispatch({
+        type: actionTypes.DELETE_ALL_CART_FAIL,
+        msg: response.data.msg,
+      });
+    }
+  } catch (error) {
+    dispatch({
+      type: actionTypes.DELETE_ALL_CART_FAIL,
+      msg: "Có lỗi xảy ra khi xóa giỏ hàng",
+    });
+  }
+};
 //update cart
 export const updateCart = (payload) => async (dispatch) => {
   try {

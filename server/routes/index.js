@@ -6,6 +6,8 @@ import tableRoute from './tableRoute';
 import customerRoute from './customerRoute'
 import orderRoute from './orderRoute'
 import cartRoute from './cartRoute'
+import reviewRoute from './reviewRoute'
+import revenueRoute from './revenueRoute'
 
 const initRoutes = (app) => {
     app.use("/api/auth", authRoute);
@@ -16,6 +18,8 @@ const initRoutes = (app) => {
     app.use("/api/customer",customerRoute);
     app.use("/api/order",orderRoute);
     app.use("/api/cart",cartRoute);
+    app.use("/api/review",reviewRoute);
+    app.use("/api/revenue",revenueRoute);
 
     return app.use('/', (req, res) => {
         res.status(200).json({ message: "Hello" });

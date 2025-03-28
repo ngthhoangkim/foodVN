@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { EmployeeCard, PopupEmployee } from "../../components";
+import { EmployeeCard, PopupEmployee, Search } from "../../components";
 import { MdAddBox } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { createOrderStaff, deleteEmployee, getAllEmployee, updateEmployee } from "../../store/actions";
@@ -10,6 +10,7 @@ const OrderEmployee = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [newStaff, setNewStaff] = useState({ name: "", phone: "", gender: "", image: null });
+  const [searchTerm, setSearchTerm] = useState("");
 
   const dispatch = useDispatch();
   const { allStaff } = useSelector((state) => state.employee);
@@ -120,18 +121,33 @@ const OrderEmployee = () => {
     closePopup();
   };
 
+  //tìm kiếm
+  const filteredStaff = allStaff.filter(
+    (employee) =>
+      employee.role.roleName === "employee" &&
+      employee.employeeName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  //phân trang
+
   return (
     <div className="w-full p-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl text-primary font-medium">Quản lý nhân viên</h1>
+        <div className="ml-auto">
+          <Search
+            placeholder="Tìm theo tên hoặc số điện thoại..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
         <div className="ml-auto text-primary text-3xl hover:opacity-80" onClick={openAddPopup}>
           <MdAddBox />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {allStaff
-          .filter(employee => employee.role.roleName === "employee")
-          .map((employee, index) => (
+        {
+          filteredStaff.map((employee, index) => (
             <EmployeeCard
               key={index}
               name={employee.employeeName}
