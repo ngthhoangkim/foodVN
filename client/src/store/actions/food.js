@@ -1,4 +1,4 @@
-import { apiCreateFood, apiDeleteFood, apiGetAllFood, apiGetOneFood, apiUpdateFood } from "../../services/food";
+import { apiCreateFood, apiDeleteFood, apiGetAllFood, apiGetBestseller, apiGetOneFood, apiUpdateFood } from "../../services/food";
 import actionTypes from "./actionTypes";
 
 //create 
@@ -128,6 +128,33 @@ export const getOneFood = (foodID) => async (dispatch) => {
       type: actionTypes.GET_ONE_FOOD,
       food: null,
       msg: "Có lỗi xảy ra khi lấy thông tin món ăn!",
+    });
+  }
+};
+//get bestseller
+export const getBestseller = () => async (dispatch) => {
+  try {
+    const response = await apiGetBestseller();
+    if (response?.data?.err === 0) {
+      dispatch({
+        type: actionTypes.GET_BEST_SELLER,
+        data: response.data.data,
+        msg: response.data.msg || "",
+      });
+    } else {
+      dispatch({
+        type: actionTypes.GET_BEST_SELLER,
+        data: [],
+        count: 0,
+        msg: response.data.msg || "Lỗi khi lấy danh sách món ăn bestseller",
+      });
+    }
+  } catch (error) {
+    dispatch({
+      type: actionTypes.GET_BEST_SELLER,
+      data: [],
+      count: 0,
+      msg: "Có lỗi xảy ra khi lấy danh sách món ăn bestseller",
     });
   }
 };

@@ -5,6 +5,7 @@ const initialState = {
   msg: null,
   count: 0,
   food: null,
+  bestseller : []
 };
 
 const foodReducer = (state = initialState, action) => {
@@ -25,6 +26,13 @@ const foodReducer = (state = initialState, action) => {
       return {
         ...state,
         foods: action.data || [],
+        msg: action.msg || "",
+        count: action.count || 0,
+      };
+    case actionTypes.GET_BEST_SELLER:
+      return {
+        ...state,
+        bestseller: action.data || [],
         msg: action.msg || "",
         count: action.count || 0,
       };

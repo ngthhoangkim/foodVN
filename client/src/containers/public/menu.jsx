@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { MenuCard, Search } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllCategory, getAllFood } from "../../store/actions";
+import { getAllCategory, getAllFood, getBestseller } from "../../store/actions";
 import { GrFormNextLink, GrFormPreviousLink } from "react-icons/gr";
 
 const Menu = () => {
   const { categories } = useSelector((state) => state.category);
-  const { foods } = useSelector((state) => state.food);
+  const { foods, bestseller } = useSelector((state) => state.food);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getAllCategory());
     dispatch(getAllFood());
+    dispatch(getBestseller())
   }, [dispatch]);
 
   const validCategories = categories.filter((cat) => cat.categoryName);
@@ -95,15 +96,19 @@ const Menu = () => {
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {currentFoods.map((food, index) => (
-            <MenuCard
-              key={`${food.id}-${index}`}
-              foodID={food.id}
-              name={food.name}
-              price={food.price}
-              image={food.foodImg}
-            />
-          ))}
+          {currentFoods.map((food, index) => {
+            const isBestseller = bestseller.some(b => b.food.id === food.id && b.orderCount >= 1);
+            return (
+              <MenuCard
+                key={`${food.id}-${index}`}
+                foodID={food.id}
+                name={food.name}
+                price={food.price}
+                image={food.foodImg}
+                isBestseller={isBestseller}
+              />
+            );
+          })}
         </div>
 
         {/* Phân trang */}

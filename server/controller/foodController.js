@@ -112,3 +112,12 @@ export const deleteFoodController = async (req, res) => {
     res.status(500).json({ ["Fail at delete food:"]: error.message });
   }
 };
+//get all bestseller
+export const getBestsellerController = async (req, res) => {
+  try {
+    const result = await foodService.getBestsellerService();
+    return res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ ["Fail at get all bestseller food:"]: error.message });
+  }
+};

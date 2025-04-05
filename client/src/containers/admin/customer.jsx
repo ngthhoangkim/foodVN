@@ -7,6 +7,7 @@ import { GrFormNextLink, GrFormPreviousLink } from "react-icons/gr";
 const Customer = () => {
     const { customers } = useSelector((state) => state.customer);
     const { order } = useSelector((state) => state.order);
+    const { bestseller } = useSelector((state) => state.food || [])
 
     const [searchTerm, setSearchTerm] = useState("");
     const [orderCount, setOrderCount] = useState({});
@@ -18,7 +19,8 @@ const Customer = () => {
     //call api get all
     useEffect(() => {
         dispatch(action.getAllCustomer());
-        dispatch(action.getAllOrder())
+        dispatch(action.getAllOrder());
+        dispatch(action.getBestseller());
     }, [dispatch]);
 
     useEffect(() => {
@@ -49,6 +51,23 @@ const Customer = () => {
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setCurrentPage(newPage);
+        }
+    };
+
+    // Phân trang bestseller
+    const [currentBestsellerPage, setCurrentBestsellerPage] = useState(1);
+    const bestsellerItemsPerPage = 5;
+
+    const sortedBestseller = [...bestseller].sort((a, b) => b.orderCount - a.orderCount);
+    const totalBestsellerPages = Math.ceil(sortedBestseller.length / bestsellerItemsPerPage);
+    const paginatedBestseller = sortedBestseller.slice(
+        (currentBestsellerPage - 1) * bestsellerItemsPerPage,
+        currentBestsellerPage * bestsellerItemsPerPage
+    );
+
+    const handleBestsellerPageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalBestsellerPages) {
+            setCurrentBestsellerPage(newPage);
         }
     };
 
@@ -114,6 +133,57 @@ const Customer = () => {
                     <GrFormNextLink size={24} />
                 </button>
             </div>
+            <div className="mt-5">
+                <h1 className="text-2xl text-primary font-medium">Danh sách món ăn bán chạy của nhà hàng</h1>
+                <table className="table-auto w-full bg-white shadow-md rounded mt-4">
+                    <thead>
+                        <tr className="bg-primary text-white">
+                            <th className="px-4 py-2" colSpan={4}>Tên món ăn</th>
+                            <th className="px-4 py-2" colSpan={2}>Ảnh</th>
+                            <th className="px-4 py-2" colSpan={2}>Số lần gọi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {paginatedBestseller.length > 0 ? (
+                            paginatedBestseller.map((food) => (
+                                <tr key={food.id} className="text-center border-b">
+                                    <td className="px-4 py-2" colSpan={4}>{food.food.name}</td>
+                                    <td className="px-4 py-2" colSpan={2}>
+                                        <img src={food.food.foodImg} alt={food.food.name} className="w-20 h-20 object-cover rounded mx-auto" /> {/* Giới hạn kích thước ảnh */}
+                                    </td>
+                                    <td className="px-4 py-2" colSpan={2}>{food.orderCount}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="8" className="text-center py-4 text-gray-500">
+                                    Không có dữ liệu món ăn.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+
+                {/* Phân trang bestseller */}
+                <div className="flex justify-center items-center mt-4">
+                    <button
+                        className={`px-3 py-1 rounded-full mx-1 ${currentBestsellerPage === 1 ? "opacity-50 cursor-not-allowed" : "bg-primary text-white"}`}
+                        disabled={currentBestsellerPage === 1}
+                        onClick={() => handleBestsellerPageChange(currentBestsellerPage - 1)}
+                    >
+                        <GrFormPreviousLink size={24} />
+                    </button>
+                    <span className="mx-2 text-primary">Trang {currentBestsellerPage} / {totalBestsellerPages}</span>
+                    <button
+                        className={`px-3 py-1 mx-1 rounded-full ${currentBestsellerPage === totalBestsellerPages ? "opacity-50 cursor-not-allowed" : "bg-primary text-white"}`}
+                        disabled={currentBestsellerPage === totalBestsellerPages}
+                        onClick={() => handleBestsellerPageChange(currentBestsellerPage + 1)}
+                    >
+                        <GrFormNextLink size={24} />
+                    </button>
+                </div>
+            </div>
+
         </div>
     )
 }

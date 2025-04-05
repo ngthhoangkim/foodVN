@@ -78,9 +78,11 @@ const ShoppingCart = () => {
     if (!activeOrder) {
       Swal.fire({
         title: "Thông báo!",
-        text: "Không tìm thấy đơn hàng đang chờ!",
+        text: "Bạn hãy quét mã qr số bàn trước!",
         icon: "warning",
         confirmButtonText: "OK",
+      }).then(() => {
+        navigate("/");
       });
       return;
     }

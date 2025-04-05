@@ -88,3 +88,18 @@ export const apiGetOneFood = (id) =>
       reject(error);
     }
   });
+
+//get bestseller
+export const apiGetBestseller = (id) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axiosConfig({
+        method: "get",
+        url: '/api/food/bestseller',
+      });
+      resolve(response);
+    } catch (error) {
+      reject(error);
+    }
+  });
+

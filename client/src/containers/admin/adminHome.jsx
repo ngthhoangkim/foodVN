@@ -57,7 +57,7 @@ const AdminHome = () => {
 
     // Lấy danh sách năm từ dữ liệu doanh thu
     const availableYears = [
-        ...new Set([
+        ...new Set([ 
             ...allRevenue?.map(item => item.year),
             ...weekRevenue?.map(item => item.year),
             ...monthRevenue?.map(item => item.year),
@@ -79,7 +79,7 @@ const AdminHome = () => {
             borderColor: "#f2af29",
             pointBorderColor: "#f2af29",
             pointBackgroundColor: "#f2af29",
-            tension: 0.4, 
+            tension: 0.4,
             fill: false,
         }]
     });
@@ -91,14 +91,16 @@ const AdminHome = () => {
             legend: {
                 display: true,
                 labels: {
-                    color: "#1F384C", 
+                    color: "#1F384C",
                     font: { size: 14, weight: "bold" }
                 }
             },
             title: { display: true, text: "Biểu đồ doanh thu" }
         },
         scales: {
-            x: { title: { display: true, text: "Thời gian" } },
+            x: { 
+                title: { display: true, text: "Thời gian" } 
+            },
             y: {
                 title: { display: true, text: "Doanh thu" },
                 beginAtZero: true,
@@ -123,8 +125,9 @@ const AdminHome = () => {
     };
 
     // Chọn kiểu biểu đồ
-    const ChartComponent = ({ data }) => {
-        switch (chartType) {
+    const ChartComponent = ({ data, isYearChart = false }) => {
+        const chartTypeToUse = isYearChart ? "Bar" : chartType; 
+        switch (chartTypeToUse) {
             case "Bar":
                 return <Bar data={data} options={chartOptions} />;
             default:
@@ -183,7 +186,7 @@ const AdminHome = () => {
 
                 <div className="bg-white p-4 shadow-lg rounded-lg">
                     <h3 className="text-center text-3xl font-semibold mb-4 text-primary">Doanh thu theo năm</h3>
-                    <ChartComponent data={generateChartData(yearRevenue, "Doanh thu năm", "year")} />
+                    <ChartComponent data={generateChartData(yearRevenue, "Doanh thu năm", "year")} isYearChart={true} />
                 </div>
             </div>
         </div>

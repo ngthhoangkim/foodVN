@@ -1,6 +1,12 @@
 import db from "../models";
 // create food
-export const createFoodService = ({ name, categoryName, price, description,foodImg }) =>
+export const createFoodService = ({
+  name,
+  categoryName,
+  price,
+  description,
+  foodImg,
+}) =>
   new Promise(async (resolve, reject) => {
     try {
       const category = await db.Category.findOne({
@@ -47,7 +53,7 @@ export const getAllFoodService = () =>
         include: [
           {
             model: db.Category,
-            as: "category", 
+            as: "category",
             attributes: ["categoryName"],
           },
         ],
@@ -57,7 +63,7 @@ export const getAllFoodService = () =>
         err: 0,
         msg: "Lấy danh sách món ăn thành công!",
         data: response,
-        count: response.length
+        count: response.length,
       });
     } catch (error) {
       reject(error);
@@ -71,7 +77,7 @@ export const getFoodByIdService = (id) =>
         include: [
           {
             model: db.Category,
-            as: "category", 
+            as: "category",
             attributes: ["categoryName"],
           },
         ],
@@ -93,7 +99,10 @@ export const getFoodByIdService = (id) =>
     }
   });
 // Update food
-export const updateFoodService = (id, { name, categoryName, price, description,image }) =>
+export const updateFoodService = (
+  id,
+  { name, categoryName, price, description, image }
+) =>
   new Promise(async (resolve, reject) => {
     try {
       // Tìm món ăn theo ID
@@ -122,7 +131,7 @@ export const updateFoodService = (id, { name, categoryName, price, description,i
         ...(categoryID !== undefined && { categoryID }),
         ...(price && { price }),
         ...(description && { description }),
-        ...(image && { foodImg: image }), 
+        ...(image && { foodImg: image }),
       };
       // Cập nhật thông tin món ăn
       await food.update(updatedData);
@@ -142,9 +151,32 @@ export const deleteFoodService = (id) =>
       const response = await db.Food.destroy({ where: { id } });
       resolve({
         err: response ? 0 : 1,
-        msg: response
-          ? "Xóa món ăn thành công!"
-          : "Dữ liệu không tồn tại!",
+        msg: response ? "Xóa món ăn thành công!" : "Dữ liệu không tồn tại!",
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+//get all bestseller
+export const getBestsellerService = () =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.BestSeller.findAll({
+        attributes: ["id", "orderCount"], 
+        include: [
+          {
+            model: db.Food, 
+            as: "food",
+            attributes: ["id","name","foodImg"], 
+            required: true,
+          },
+        ],
+      });
+      resolve({
+        err: 0,
+        msg: "Lấy danh sách món ăn bán chạy thành công!",
+        data: response,
       });
     } catch (error) {
       reject(error);

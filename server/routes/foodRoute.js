@@ -10,6 +10,10 @@ router.post("/", upload.single("image"), foodController.createFoodController);
 // Route lấy tất cả món ăn
 router.get("/", foodController.getAllFoodController);
 
+//get all bestseller
+router.get("/bestseller", foodController.getBestsellerController);
+
+
 // Route lấy món ăn theo ID
 router.get("/:id", foodController.getFoodByIdController);
 
@@ -17,7 +21,7 @@ router.get("/:id", foodController.getFoodByIdController);
 router.put("/:id", upload.single("image"), foodController.updateFoodController);
 
 // Route xóa món ăn
-router.delete("/:id",upload.single("image"),foodController.deleteFoodController
-);
+router.delete("/:id",upload.single("image"),foodController.deleteFoodController);
+
 
 export default router;

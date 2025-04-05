@@ -313,11 +313,10 @@ export const updateOrderStatusService = ({ orderID, status, employeeID }) =>
           where: { orderID },
           attributes: ["foodID", "quantity"],
         });
-        console.log(orderDetails)
+        
         for (const item of orderDetails) {
           const { foodID, quantity } = item;
-          console.log(`🛠 Debug - FoodID: ${foodID}, Quantity: ${quantity}`);
-
+        
           const existingBestSeller = await db.BestSeller.findOne({
             where: { foodID },
           });

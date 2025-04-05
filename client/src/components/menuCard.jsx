@@ -8,7 +8,7 @@ import { addCart, deleteCart, updateCart, getCart } from "../store/actions";
 import Swal from "sweetalert2";
 import { path } from "../ultils/constant";
 
-const MenuCard = ({ foodID, name, price, image }) => {
+const MenuCard = ({ foodID, name, price, image,isBestseller  }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -79,7 +79,12 @@ const MenuCard = ({ foodID, name, price, image }) => {
     };
 
     return (
-        <div className="w-full max-w-xs bg-gradientPrimary shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
+        <div className="relative w-full max-w-xs bg-gradientPrimary shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
+            {isBestseller && (
+                <div className="absolute left-0 bg-redDark text-white text-sm font-bold px-3 py-1 rounded-r-lg">
+                    Bestseller
+                </div>
+            )}
             <img src={image} alt={name} className="w-full h-60 object-cover" />
 
             <div className="p-4 text-center flex flex-col justify-between min-h-[200px]">
