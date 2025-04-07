@@ -15,21 +15,7 @@ export const createOrderController = async (req, res) => {
     res.status(500).json({ ["Fail at create order:"]: error.message });
   }
 };
-//create order detail
-// export const createOrderDetailController = async (req, res) => {
-//   const { orderID, foodID, quantity } = req.body;
-//   try {
-//     if (!orderID || !foodID || !quantity) {
-//       return res
-//         .status(400)
-//         .json({ err: 1, msg: "Vui lòng nhập đầy đủ thông tin!" });
-//     }
-//     const response = await orderService.createOrderDetailService(req.body);
-//     return res.status(201).json(response);
-//   } catch (error) {
-//     res.status(500).json({ ["Fail at create order detail:"]: error.message });
-//   }
-// };
+
 //get order
 export const getOrderController = async (req, res) => {
   const cutomerID = req.params.id;
@@ -40,6 +26,7 @@ export const getOrderController = async (req, res) => {
     res.status(500).json({ ["Fail at get order:"]: error.message });
   }
 };
+
 //update order
 export const updateOrderController = async (req, res) => {
   const { customerID,orderID } = req.body;

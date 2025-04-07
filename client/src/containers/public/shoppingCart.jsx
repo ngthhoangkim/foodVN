@@ -16,7 +16,7 @@ const ShoppingCart = () => {
   const { id } = useSelector((state) => state.auth);
   const { order = [] } = useSelector((state) => state.order || { order: [] });
 
-  const activeOrder = order.find(o => o.status === "pending");
+  const activeOrder = order.find(o => o.status === "pending" || o.status === "preparing");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

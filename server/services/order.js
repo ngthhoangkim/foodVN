@@ -145,6 +145,7 @@ export const updateOrderService = ({ customerID, orderID }) =>
 
       for (const item of cartItems) {
         const { foodID, quantity } = item;
+        
         const food = await db.Food.findOne({ where: { id: foodID } });
         if (!food) continue;
 
@@ -382,7 +383,7 @@ export const updateOrderStatusService = ({ orderID, status, employeeID }) =>
         case "paying":
           await sendNotification(
             "employee",
-            "Nhân viên gửi đơn",
+            "Yêu cầu thanh toán",
             `Bàn ${tableNumber} - ${hallName} đang gọi thanh toán!`
           );
         default:

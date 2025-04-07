@@ -19,7 +19,7 @@ export default function App() {
   useEffect(() => {
     requestUserPermission();
 
-    // Chỉ đăng ký lắng nghe thông báo MỘT LẦN
+    // đăng ký lắng nghe thông báo
     const unsubscribeOnMessage = messaging().onMessage(async (remoteMessage) => {
       Alert.alert("Thông báo mới!", JSON.stringify(remoteMessage));
     });

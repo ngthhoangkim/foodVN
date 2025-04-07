@@ -35,61 +35,55 @@ const Login = () => {
 
     useEffect(() => {
         if (isLoggedIn) {
+            Swal.fire("Thành công!", "Đăng ký tài khoản thành công.", "success");
+            setPayload({
+                email: "",
+                name: "",
+                phone: "",
+                birthday: "",
+                password: "",
+            });
+            setConfirmPassword("");
             if (role === 'customer') {
                 navigate('/');
             } else if (role === 'admin') {
                 navigate('/admin');
             }
         }
-    }, [isLoggedIn, role, navigate]);
+    }, [isLoggedIn, role]);
 
     useEffect(() => {
-        msg && Swal.fire('Thông báo!', msg, 'warning')
-    }, [msg, update])
+        if (msg) {
+            Swal.fire("Thông báo!", msg, "warning").then(() => {
+                window.location.reload();
+            });
+        }
+    }, [msg, update]);
 
     //xử lý sumit
     const handleSumit = async () => {
         let finalPayload = isRegister
             ? payload
             : {
-                  phone: payload.phone,
-                  password: payload.password,
-              };
-    
+                phone: payload.phone,
+                password: payload.password,
+            };
+
         const formattedPayload = {
             ...payload,
             birthday: new Date(payload.birthday).toLocaleDateString("en-GB"),
         };
-    
+
         let invalids = validate(finalPayload);
         if (invalids.length === 0) {
             if (isRegister) {
-                // Gọi hành động đăng ký
-                dispatch(actions.register(formattedPayload))
-                    .then(() => {
-                        // Hiển thị thông báo thành công
-                        Swal.fire("Thành công!", "Đăng ký tài khoản thành công.", "success");
-                        
-                        // Reset form
-                        setPayload({
-                            email: "",
-                            name: "",
-                            phone: "",
-                            birthday: "",
-                            password: "",
-                        });
-                        setConfirmPassword("");
-                    })
-                    .catch((error) => {
-                        Swal.fire("Lỗi!", error.message || "Đăng ký thất bại.", "error");
-                    });
+                dispatch(actions.register(formattedPayload));
             } else {
-                // Gọi hành động đăng nhập
                 dispatch(actions.login(finalPayload));
             }
         }
     };
-    
+
     //thông báo lỗi 
     const validate = (payload) => {
         let invalids = [];

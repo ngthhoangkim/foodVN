@@ -16,7 +16,7 @@ const Nav = () => {
   const { order = [] } = useSelector((state) => state.order || { order: [] });
 
   //lọc đơn
-  const activeOrder = order.find(o => o.status === "pending");
+  const activeOrder = order.find(o => o.status === "pending" || o.status === "preparing");
 
 
   const goLogin = useCallback((flag) => {

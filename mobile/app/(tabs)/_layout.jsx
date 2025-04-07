@@ -17,7 +17,7 @@ const Layout = () => {
   }, [id, dispatch]);
 
   if (role === "chef") {
-    // 🔥 Nếu role là "chef", chỉ hiển thị màn hình order mà không có Tabs
+    // Nếu role là "chef", chỉ hiển thị màn hình order mà không có Tabs
     return (
       <Stack>
         <Stack.Screen

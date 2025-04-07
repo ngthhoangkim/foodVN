@@ -167,7 +167,7 @@ const HomePage = () => {
             onClick={handleGoToMenu}
           >
             <span className="relative z-10 group-hover:text-txtCard">
-              {order && order.length > 0 && order.some(o => o.status === "pending")
+              {order && order.length > 0 && (order.some(o => o.status === "pending") || order.some(o => o.status === "preparing"))
                 ? "Xem menu"
                 : "Gọi món ngay"}
             </span>
